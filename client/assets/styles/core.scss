@@ -1,0 +1,7 @@
+$bp_sp: 896px;
+
+@mixin bp_sp() {
+  @media screen and (max-width: $bp_sp) {
+    @content;
+  }
+}
