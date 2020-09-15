@@ -5,10 +5,10 @@
       <el-color-picker
         v-if="geojsons.length > 0"
         v-model="color"
-        size="small"
+        size="medium"
         :predefine="predefineColors"
       ></el-color-picker>
-      <el-select v-model="theme" size="small">
+      <el-select v-model="theme" size="medium">
         <el-option
           v-for="(t, i) in themes"
           :key="i"
