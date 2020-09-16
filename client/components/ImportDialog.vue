@@ -1,9 +1,5 @@
 <template>
-  <el-dialog
-    title="緯度経度データ読み込み"
-    :visible.sync="visible"
-    :before-close="onBeforeClose"
-  >
+  <el-dialog title="緯度経度データ読み込み" :visible.sync="visible" :before-close="onBeforeClose">
     <el-input
       v-model="textarea"
       type="textarea"
@@ -13,15 +9,15 @@
     <span slot="footer" class="dialog-footer">
       <el-button @click="onClickSample">お試し</el-button>
       <div class="spacer"></div>
-      <el-button type="primary" :disabled="isDisabledImport" @click="onImport"
-        >読み込み</el-button
-      >
+      <el-button type="primary" :disabled="isDisabledImport" @click="onImport">読み込み</el-button>
       <el-button @click="onClose">キャンセル</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
+import japanmesh from 'japanmesh'
+
 export default {
   props: {
     visible: {
@@ -90,7 +86,33 @@ export default {
     },
 
     onClickSample() {
-      this.textarea = `35.63908141220088,139.47267708300782\n35.708527085483155,139.54580482958985\n35.65386808298502,139.58803352832032`
+      const locations = this.getRandomLocations()
+      locations.forEach((l) => {
+        if (this.textarea.length !== 0) {
+          this.textarea += '\n'
+        }
+        this.textarea += `${l.lat},${l.lng}`
+      })
+    },
+
+    getRandomLocations() {
+      const LIMIT = 100
+      const TARGET_MESH_CODE = '5339' // 東京近郊
+      const locations = []
+      const lv2codes = japanmesh.getCodes(TARGET_MESH_CODE)
+      const rand = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
+      while (locations.length < LIMIT) {
+        const lv3codes = japanmesh.getCodes(lv2codes[rand(0, lv2codes.length - 1)])
+        const geojson = japanmesh.toGeoJSON(lv3codes[rand(0, lv3codes.length - 1)])
+        const coordinate = geojson.geometry.coordinates[0][rand(0, 4)]
+        const code = japanmesh.toCode(coordinate[1], coordinate[0], rand(5, 6))
+        if (code.indexOf(TARGET_MESH_CODE) === 0) {
+          const g = japanmesh.toGeoJSON(code)
+          const c = g.geometry.coordinates[0][rand(0, 4)]
+          locations.push({ lat: c[1], lng: c[0] })
+        }
+      }
+      return locations
     },
   },
 }

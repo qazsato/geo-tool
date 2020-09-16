@@ -1,18 +1,10 @@
 <template>
   <el-container class="page">
     <el-header>
-      <Header
-        :title="title"
-        @clickShare="onClickShare"
-        @clickImport="onClickImport"
-      />
+      <Header :title="title" @clickShare="onClickShare" @clickImport="onClickImport" />
     </el-header>
     <el-main v-loading="loading">
-      <Cascader
-        v-if="locations.length > 0"
-        class="cascader"
-        @change="onChange"
-      />
+      <Cascader v-if="locations.length > 0" class="cascader" @change="onChange" />
       <GoogleMap
         :infowindows="infowindows"
         :geojsons="geojsons"
@@ -25,11 +17,7 @@
     </el-main>
 
     <ShareDialog :visible="shareDialogVisible" @close="closeDialog" />
-    <ImportDialog
-      :visible="importDialogVisible"
-      @import="onImport"
-      @close="closeDialog"
-    />
+    <ImportDialog :visible="importDialogVisible" @import="onImport" @close="closeDialog" />
   </el-container>
 </template>
 
@@ -124,9 +112,7 @@ export default {
       })
       const shapeRes = await shapeApi.get()
       shapeRes.data.features.forEach((feature) => {
-        const d = res.data.filter(
-          (d) => d.address.code === feature.properties.code
-        )[0]
+        const d = res.data.filter((d) => d.address.code === feature.properties.code)[0]
         const opacity = (d.count / max) * 0.9
         feature.properties.count = d.count
         feature.properties.addressName = d.address.name
@@ -155,9 +141,7 @@ export default {
     },
 
     fetchHeatmap(locations) {
-      const latLngs = locations.map(
-        (l) => new this.google.maps.LatLng(l.lat, l.lng)
-      )
+      const latLngs = locations.map((l) => new this.google.maps.LatLng(l.lat, l.lng))
       const heatmap = new this.google.maps.visualization.HeatmapLayer({
         data: new this.google.maps.MVCArray(latLngs),
       })
@@ -238,10 +222,7 @@ export default {
       const westernmost = _.minBy(coords, (c) => c[0])
       const easternmost = _.maxBy(coords, (c) => c[0])
 
-      return new this.google.maps.LatLng(
-        northernmost[1],
-        (westernmost[0] + easternmost[0]) / 2
-      )
+      return new this.google.maps.LatLng(northernmost[1], (westernmost[0] + easternmost[0]) / 2)
     },
   },
 }

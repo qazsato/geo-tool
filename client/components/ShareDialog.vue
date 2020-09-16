@@ -1,9 +1,5 @@
 <template>
-  <el-dialog
-    title="地図を共有"
-    :visible.sync="visible"
-    :before-close="onBeforeClose"
-  >
+  <el-dialog title="地図を共有" :visible.sync="visible" :before-close="onBeforeClose">
     <el-input v-model="url">
       <el-tooltip slot="append" content="copy" placement="top">
         <el-button icon="el-icon-s-order"></el-button>

@@ -1,9 +1,5 @@
 <template>
-  <el-cascader
-    v-model="value"
-    :options="options"
-    @change="onChange"
-  ></el-cascader>
+  <el-cascader v-model="value" :options="options" @change="onChange"></el-cascader>
 </template>
 
 <script>

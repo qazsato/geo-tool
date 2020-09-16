@@ -9,13 +9,7 @@
         :predefine="predefineColors"
       ></el-color-picker>
       <el-select v-model="theme" size="medium">
-        <el-option
-          v-for="(t, i) in themes"
-          :key="i"
-          :label="t"
-          :value="t"
-          class="theme-option"
-        >
+        <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
           <img :src="require(`~/assets/images/map/themes/${t}.png`)" />
           <span class="name">{{ t }}</span>
         </el-option>
@@ -83,16 +77,7 @@ export default {
       google: null,
       map: null,
       color: this.getDefaultColor(),
-      predefineColors: [
-        '#409eff',
-        '#ff4500',
-        '#ff8c00',
-        '#ffd700',
-        '#90ee90',
-        '#00ced1',
-        '#1e90ff',
-        '#c71585',
-      ],
+      predefineColors: ['#409eff', '#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
       theme: this.getDefaultTheme(),
       themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine'],
       localMarkers: [],
@@ -127,16 +112,12 @@ export default {
       this.localMarkers = this.markers
 
       this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
-        imagePath:
-          'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
       })
     },
 
     infowindows(val) {
-      const diffInfowindows = _.difference(
-        this.localInfowindows,
-        this.infowindows
-      )
+      const diffInfowindows = _.difference(this.localInfowindows, this.infowindows)
       diffInfowindows.forEach((infowindow) => infowindow.setMap(null))
 
       this.infowindows.forEach((infowindow) => {
@@ -220,15 +201,9 @@ export default {
     bindMap() {
       this.map.addListener('click', (e) => this.$emit('click', e))
       this.map.data.addListener('click', (e) => this.$emit('clickData', e))
-      this.map.data.addListener('mouseout', (e) =>
-        this.$emit('mouseoutData', e)
-      )
-      this.map.data.addListener('mousemove', (e) =>
-        this.$emit('mousemoveData', e)
-      )
-      this.map.data.addListener('mouseover', (e) =>
-        this.$emit('mouseoverData', e)
-      )
+      this.map.data.addListener('mouseout', (e) => this.$emit('mouseoutData', e))
+      this.map.data.addListener('mousemove', (e) => this.$emit('mousemoveData', e))
+      this.map.data.addListener('mouseover', (e) => this.$emit('mouseoverData', e))
     },
 
     drawData() {
