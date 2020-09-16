@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import MarkerClusterer from '@google/markerclustererplus'
 import _ from 'lodash'
 import ls from 'local-storage'
 import config from '@/config'
@@ -90,6 +91,7 @@ export default {
       themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine'],
       localMarkers: [],
       localInfowindows: [],
+      markerClusterer: null,
     }
   },
 
@@ -112,6 +114,11 @@ export default {
         marker.setMap(this.map)
       })
       this.localMarkers = this.markers
+
+      this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
+        imagePath:
+          'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+      })
     },
 
     infowindows(val) {

@@ -25,6 +25,7 @@
     }
   },
   "dependencies": {
+    "@google/markerclustererplus": "5.1.0",
     "@nuxtjs/axios": "5.11.0",
     "element-ui": "2.13.2",
     "google-maps-api-loader": "1.1.1",
