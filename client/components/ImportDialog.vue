@@ -86,6 +86,7 @@ export default {
     },
 
     onClickSample() {
+      this.textarea = ''
       const locations = this.getRandomLocations()
       locations.forEach((l) => {
         if (this.textarea.length !== 0) {

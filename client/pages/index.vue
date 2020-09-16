@@ -1,9 +1,9 @@
 <template>
-  <el-container class="page">
+  <el-container v-loading="loading" class="page">
     <el-header>
       <Header :title="title" @clickShare="onClickShare" @clickImport="onClickImport" />
     </el-header>
-    <el-main v-loading="loading">
+    <el-main>
       <Cascader v-if="locations.length > 0" class="cascader" @change="onChange" />
       <GoogleMap
         :infowindows="infowindows"
