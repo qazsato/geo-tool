@@ -2,8 +2,7 @@
   <el-cascader
     v-model="value"
     :options="options"
-    :props="{ expandTrigger: 'hover' }"
-    @change="handleChange"
+    @change="onChange"
   ></el-cascader>
 </template>
 
@@ -11,23 +10,23 @@
 export default {
   data() {
     return {
-      value: [],
+      value: 'cluster',
       options: [
         {
           value: 'address',
           label: '住所',
           children: [
             {
-              value: 'pref',
+              value: 'level1',
               label: '都道府県',
             },
             {
-              value: 'city',
+              value: 'level2',
               label: '市区町村',
             },
             {
-              value: 'town',
-              label: '丁目番地',
+              value: 'level3',
+              label: '町丁・字等',
             },
           ],
         },
@@ -36,27 +35,27 @@ export default {
           label: '地域メッシュ',
           children: [
             {
-              value: 'mesh1',
+              value: 'level1',
               label: '1次メッシュ(80km)',
             },
             {
-              value: 'mesh2',
+              value: 'level2',
               label: '2次メッシュ(10km)',
             },
             {
-              value: 'mesh3',
+              value: 'level3',
               label: '3次メッシュ(1km)',
             },
             {
-              value: 'mesh4',
+              value: 'level4',
               label: '4次メッシュ(500m)',
             },
             {
-              value: 'mesh5',
+              value: 'level5',
               label: '5次メッシュ(250m)',
             },
             {
-              value: 'mesh6',
+              value: 'level6',
               label: '6次メッシュ(125m)',
             },
           ],
@@ -74,8 +73,8 @@ export default {
   },
 
   methods: {
-    handleChange(value) {
-      console.log(value)
+    onChange(value) {
+      this.$emit('change', value)
     },
   },
 }
