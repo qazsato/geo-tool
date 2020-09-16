@@ -14,7 +14,10 @@ export const mutations = {
 export const actions = {
   async load(context) {
     const apiKey = config.google_maps.api_key
-    const google = await GoogleMapsApiLoader({ apiKey })
+    const google = await GoogleMapsApiLoader({
+      libraries: ['visualization'],
+      apiKey,
+    })
     context.commit('load', google)
   },
 }

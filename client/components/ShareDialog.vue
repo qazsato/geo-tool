@@ -5,7 +5,7 @@
     :before-close="onBeforeClose"
   >
     <el-input v-model="url">
-      <el-tooltip slot="append" effect="dark" content="copy" placement="top">
+      <el-tooltip slot="append" content="copy" placement="top">
         <el-button icon="el-icon-s-order"></el-button>
       </el-tooltip>
     </el-input>
@@ -41,9 +41,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.el-dialog {
-  width: 50%;
-}
-</style>

@@ -97,10 +97,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-dialog {
-  width: 50%;
-}
-
 .dialog-footer {
   display: flex;
 

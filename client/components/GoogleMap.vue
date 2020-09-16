@@ -70,6 +70,12 @@ export default {
         return []
       },
     },
+
+    heatmap: {
+      required: false,
+      type: Object,
+      default: null,
+    },
   },
 
   data() {
@@ -91,7 +97,8 @@ export default {
       themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine'],
       localMarkers: [],
       localInfowindows: [],
-      markerClusterer: null,
+      localHeatmap: null,
+      localMarkerClusterer: null,
     }
   },
 
@@ -107,6 +114,10 @@ export default {
     },
 
     markers(val) {
+      if (this.markerClusterer) {
+        this.markerClusterer.clearMarkers()
+      }
+
       const diffMarkers = _.difference(this.localMarkers, this.markers)
       diffMarkers.forEach((marker) => marker.setMap(null))
 
@@ -149,6 +160,16 @@ export default {
       const locations = this.getVisibleLocations()
       if (locations.length > 0) {
         adjustViewPort(this.google, this.map, locations)
+      }
+    },
+
+    heatmap(val) {
+      if (this.heatmap) {
+        this.heatmap.setMap(this.map)
+        this.localHeatmap = this.heatmap
+      } else {
+        this.localHeatmap.setMap(null)
+        this.localHeatmap = null
       }
     },
   },

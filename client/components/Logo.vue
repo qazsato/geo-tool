@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <span>Geo Tool</span>
-    <img src="~/assets/images/earth.svg" />
+    <img src="~/assets/images/planet.svg" />
   </div>
 </template>
 
@@ -14,8 +14,8 @@
   margin: 10px 0;
   padding: 5px 0;
   border-radius: 3px;
-  background: #3b4151;
-  color: #fff;
+  background: #eee;
+  color: #3b4151;
   line-height: 19px;
   text-decoration: none;
   font-weight: bold;

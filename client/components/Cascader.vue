@@ -17,15 +17,15 @@ export default {
           label: '住所',
           children: [
             {
-              value: 'level1',
+              value: '1',
               label: '都道府県',
             },
             {
-              value: 'level2',
+              value: '2',
               label: '市区町村',
             },
             {
-              value: 'level3',
+              value: '3',
               label: '町丁・字等',
             },
           ],
@@ -35,27 +35,27 @@ export default {
           label: '地域メッシュ',
           children: [
             {
-              value: 'level1',
+              value: '1',
               label: '1次メッシュ(80km)',
             },
             {
-              value: 'level2',
+              value: '2',
               label: '2次メッシュ(10km)',
             },
             {
-              value: 'level3',
+              value: '3',
               label: '3次メッシュ(1km)',
             },
             {
-              value: 'level4',
+              value: '4',
               label: '4次メッシュ(500m)',
             },
             {
-              value: 'level5',
+              value: '5',
               label: '5次メッシュ(250m)',
             },
             {
-              value: 'level6',
+              value: '6',
               label: '6次メッシュ(125m)',
             },
           ],
