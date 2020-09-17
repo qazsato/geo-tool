@@ -7,7 +7,9 @@
       :autosize="{ minRows: 10, maxRows: 10 }"
     ></el-input>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="onClickSample">お試し</el-button>
+      <el-tooltip content="ランダムで生成した緯度経度を設定します" placement="top">
+        <el-button @click="onClickSample">お試し</el-button>
+      </el-tooltip>
       <div class="spacer"></div>
       <el-button type="primary" :disabled="isDisabledImport" @click="onImport">読み込み</el-button>
       <el-button @click="onClose">キャンセル</el-button>

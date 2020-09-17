@@ -4,7 +4,10 @@
       <Header :title="title" @clickShare="onClickShare" @clickImport="onClickImport" />
     </el-header>
     <el-main>
-      <Cascader v-if="locations.length > 0" class="cascader" @change="onChange" />
+      <div v-if="locations.length > 0" class="button-area">
+        <Cascader class="cascader" @change="onChange" />
+        <el-button icon="el-icon-share" @click="onClickShare">地図を共有する</el-button>
+      </div>
       <GoogleMap
         :infowindows="infowindows"
         :geojsons="geojsons"
@@ -234,16 +237,27 @@ export default {
   height: 100vh;
 }
 
+.el-header {
+  padding: 0;
+}
+
 .el-main {
   position: relative;
   padding: 0;
   height: 100%;
 }
 
-.cascader {
+.button-area {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  left: 10px;
   z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+
+  .cascader,
+  .el-button {
+    margin: 10px;
+  }
 }
 </style>

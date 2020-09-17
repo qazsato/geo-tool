@@ -3,12 +3,8 @@
     <h1 v-if="title" class="title">{{ title }}</h1>
     <Logo v-else />
     <div class="spacer"></div>
-    <el-tooltip content="共有する" placement="bottom">
-      <el-button icon="el-icon-share" @click="onClickShare"></el-button>
-    </el-tooltip>
-    <el-tooltip content="データ読込" placement="bottom">
-      <el-button icon="el-icon-place" @click="onClickImport"></el-button>
-    </el-tooltip>
+    <el-button icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
+    <GithubCorner fill="#bbb" />
   </div>
 </template>
 
@@ -22,10 +18,6 @@ export default {
   },
 
   methods: {
-    onClickShare() {
-      this.$emit('clickShare')
-    },
-
     onClickImport() {
       this.$emit('clickImport')
     },
@@ -38,6 +30,7 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
+  padding: 0 60px 0 20px;
 }
 
 .spacer {
