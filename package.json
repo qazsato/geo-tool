@@ -25,8 +25,13 @@
     }
   },
   "dependencies": {
+    "@google/markerclustererplus": "5.1.0",
     "@nuxtjs/axios": "5.11.0",
     "element-ui": "2.13.2",
+    "google-maps-api-loader": "1.1.1",
+    "japanmesh": "0.1.0",
+    "local-storage": "2.0.0",
+    "lodash": "4.17.20",
     "nuxt": "2.13.0",
     "nuxt-start": "2.14.3",
     "serverless-apigw-binary": "0.4.4",
@@ -47,7 +52,9 @@
     "husky": "4.2.5",
     "jest": "26.0.1",
     "lint-staged": "10.2.11",
+    "node-sass": "4.14.1",
     "prettier": "2.0.5",
+    "sass-loader": "10.0.2",
     "serverless": "1.78.1",
     "serverless-domain-manager": "4.2.0",
     "serverless-offline": "6.5.0",
