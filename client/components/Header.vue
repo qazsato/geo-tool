@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <h1 v-if="title" class="title">{{ title }}</h1>
-    <Logo v-else />
+    <Logo v-else href="/" />
     <div class="spacer"></div>
     <el-button icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
     <GithubCorner fill="#bbb" />

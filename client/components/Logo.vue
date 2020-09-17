@@ -1,9 +1,25 @@
 <template>
-  <div class="logo">
+  <a class="logo" :href="href" :target="target">
     <span>Geo Tool</span>
     <img src="~/assets/images/planet.svg" />
-  </div>
+  </a>
 </template>
+
+<script>
+export default {
+  props: {
+    href: {
+      required: true,
+      type: String,
+    },
+    target: {
+      required: false,
+      type: String,
+      default: null,
+    },
+  },
+}
+</script>
 
 <style lang="scss" scoped>
 .logo {
@@ -19,6 +35,7 @@
   line-height: 19px;
   text-decoration: none;
   font-weight: bold;
+  white-space: nowrap;
 
   > img {
     margin-left: 6px;

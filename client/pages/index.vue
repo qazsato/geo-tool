@@ -257,7 +257,7 @@ export default {
 
   .cascader,
   .el-button {
-    margin: 10px;
+    margin: 5px;
   }
 }
 </style>
