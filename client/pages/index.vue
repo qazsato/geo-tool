@@ -6,7 +6,10 @@
     <el-main>
       <div v-if="locations.length > 0" class="button-area">
         <Cascader class="cascader" @change="onChange" />
-        <el-button icon="el-icon-share" @click="onClickShare">地図を共有する</el-button>
+        <!-- <el-button icon="el-icon-share" @click="onClickShare">地図を共有する</el-button> -->
+        <el-button v-if="tableData.length > 0" icon="el-icon-data-analysis" @click="onClickTable"
+          >表・グラフで確認する</el-button
+        >
       </div>
       <GoogleMap
         :infowindows="infowindows"
@@ -17,6 +20,8 @@
         @mousemoveData="onMousemoveData"
         @mouseoverData="onMouseoverData"
       />
+
+      <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
     </el-main>
 
     <ShareDialog :visible="shareDialogVisible" @close="closeDialog" />
@@ -41,9 +46,18 @@ export default {
       geojsons: [],
       markers: [],
       heatmap: null,
+      tableData: [],
       shareDialogVisible: false,
       importDialogVisible: false,
+      drawerVisible: false,
+      activeTab: 'table',
     }
+  },
+
+  computed: {
+    drawerTitle() {
+      return `ポリゴンデータ (全${this.tableData.length}件)`
+    },
   },
 
   watch: {
@@ -71,6 +85,10 @@ export default {
     closeDialog() {
       this.shareDialogVisible = false
       this.importDialogVisible = false
+    },
+
+    closeDrawer() {
+      this.drawerVisible = false
     },
 
     onImport(locations) {
@@ -108,6 +126,12 @@ export default {
         level,
       })
       const res = await api.post()
+      this.tableData = res.data.map((d) => {
+        return {
+          key: d.address.name,
+          count: d.count,
+        }
+      })
       const max = Math.max(...res.data.map((d) => d.count))
       const codes = res.data.map((d) => d.address.code)
       const shapeApi = new GeoApi('/addresses/shape', {
@@ -129,6 +153,12 @@ export default {
     fetchMeshGeoJSON(locations, level) {
       const geojsons = []
       const counts = this.calcCountGroupByCode(locations, level)
+      this.tableData = counts.map((c, i) => {
+        return {
+          key: c.code,
+          count: c.count,
+        }
+      })
       const max = Math.max(...counts.map((c) => c.count))
       counts.forEach((c) => {
         const opacity = (c.count / max) * 0.9
@@ -166,6 +196,7 @@ export default {
       this.geojsons = []
       this.markers = []
       this.heatmap = null
+      this.tableData = []
     },
 
     calcCountGroupByCode(locations, level) {
@@ -227,6 +258,10 @@ export default {
 
       return new this.google.maps.LatLng(northernmost[1], (westernmost[0] + easternmost[0]) / 2)
     },
+
+    onClickTable() {
+      this.drawerVisible = true
+    },
   },
 }
 </script>
@@ -235,6 +270,7 @@ export default {
 .page {
   width: 100%;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
 }
 
 .el-header {

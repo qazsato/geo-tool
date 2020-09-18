@@ -1,5 +1,10 @@
 <template>
-  <el-dialog title="緯度経度データ読み込み" :visible.sync="visible" :before-close="onBeforeClose">
+  <el-dialog
+    title="緯度経度データ読み込み"
+    :visible.sync="visible"
+    :before-close="onBeforeClose"
+    custom-class="import-dialog"
+  >
     <el-input
       v-model="textarea"
       type="textarea"
@@ -127,6 +132,16 @@ export default {
 
   .spacer {
     flex: 1;
+  }
+}
+</style>
+
+<style lang="scss">
+.import-dialog {
+  width: 40%;
+
+  @include bp_sp() {
+    width: 80%;
   }
 }
 </style>
