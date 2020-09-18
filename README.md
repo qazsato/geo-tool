@@ -1,20 +1,18 @@
-# geo-tool
+# Geo Tool
 
-## Build Setup
+<img src="https://qazsato.com/images/geo-tool.png" alt="Logo" width="250px">
 
-```bash
-# install dependencies
-$ npm install
+## About
 
-# serve with hot reload at localhost:3000
-$ npm run dev
+緯度経度を地図上に可視化・分析するためのツールです。  
 
-# build for production and launch server
-$ npm run build
-$ npm run start
+https://tool.geo.qazsato.com  
 
-# generate static project
-$ npm run generate
-```
+下記4種類の表示が可能です。  
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+1. 住所 (都道府県・市区町村など)
+2. 地域メッシュ
+3. ヒートマップ
+4. マーカークラスタリング
+
+![Geo Tool](https://user-images.githubusercontent.com/5030713/93597137-844a7f80-f9f5-11ea-84b7-5a8762e67b7b.png)
