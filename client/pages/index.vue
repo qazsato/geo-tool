@@ -8,7 +8,7 @@
         <Cascader class="cascader" @change="onChange" />
         <!-- <el-button icon="el-icon-share" @click="onClickShare">地図を共有する</el-button> -->
         <el-button v-if="tableData.length > 0" icon="el-icon-data-analysis" @click="onClickTable"
-          >表で確認する</el-button
+          >表・グラフで確認する</el-button
         >
       </div>
       <GoogleMap
@@ -21,17 +21,18 @@
         @mouseoverData="onMouseoverData"
       />
 
-      <el-drawer
-        :title="drawerTitle"
-        :visible.sync="drawerVisible"
-        custom-class="data-drawer"
-        direction="ltr"
-        size="40%"
-      >
-        <el-table :data="tableData" :default-sort="{ prop: 'count', order: 'descending' }">
-          <el-table-column prop="key" label="名前" sortable></el-table-column>
-          <el-table-column prop="count" label="件数" sortable></el-table-column>
-        </el-table>
+      <el-drawer :title="drawerTitle" :visible.sync="drawerVisible" custom-class="data-drawer" direction="ltr">
+        <el-tabs v-model="activeTab" :stretch="true">
+          <el-tab-pane label="表" name="table">
+            <el-table :data="tableData" :default-sort="{ prop: 'count', order: 'descending' }">
+              <el-table-column prop="key" label="名前" sortable></el-table-column>
+              <el-table-column prop="count" label="件数" width="100" sortable></el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="グラフ" name="graph">
+            <canvas ref="chart"></canvas>
+          </el-tab-pane>
+        </el-tabs>
       </el-drawer>
     </el-main>
 
@@ -61,12 +62,13 @@ export default {
       shareDialogVisible: false,
       importDialogVisible: false,
       drawerVisible: false,
+      activeTab: 'table',
     }
   },
 
   computed: {
     drawerTitle() {
-      return `テーブル (全${this.tableData.length}件)`
+      return `ポリゴンデータ (全${this.tableData.length}件)`
     },
   },
 
@@ -132,11 +134,11 @@ export default {
         level,
       })
       const res = await api.post()
-      res.data.forEach((d) => {
-        this.tableData.push({
+      this.tableData = res.data.map((d) => {
+        return {
           key: d.address.name,
           count: d.count,
-        })
+        }
       })
       const max = Math.max(...res.data.map((d) => d.count))
       const codes = res.data.map((d) => d.address.code)
@@ -309,7 +311,12 @@ export default {
 
 <style lang="scss">
 .data-drawer {
+  width: 40% !important;
   outline: 0;
+
+  @include bp_sp() {
+    width: 100% !important;
+  }
 
   .el-drawer__header {
     > span {

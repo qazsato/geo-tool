@@ -32,6 +32,9 @@ module.exports = {
    ** Global CSS
    */
   css: ['element-ui/lib/theme-chalk/index.css'],
+  styleResources: {
+    scss: ['@/assets/styles/core.scss'],
+  },
   /*
    ** Plugins to load before mounting the App
    ** https://nuxtjs.org/guide/plugins
@@ -50,6 +53,7 @@ module.exports = {
     '@nuxtjs/eslint-module',
     // Doc: https://github.com/nuxt-community/stylelint-module
     '@nuxtjs/stylelint-module',
+    '@nuxtjs/style-resources',
   ],
   /*
    ** Nuxt.js modules
