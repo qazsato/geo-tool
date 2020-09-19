@@ -33,7 +33,7 @@
 import { mapActions } from 'vuex'
 import _ from 'lodash'
 import japanmesh from 'japanmesh'
-import GeoApi from '@/requests/geo_api'
+import GeoApi from '@/requests/geo-api'
 
 export default {
   data() {
