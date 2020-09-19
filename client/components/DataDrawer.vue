@@ -91,7 +91,7 @@ export default {
   width: 40% !important;
   outline: 0;
 
-  @include bp_sp() {
+  @include sp() {
     width: 100% !important;
   }
 

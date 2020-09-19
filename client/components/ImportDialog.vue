@@ -140,7 +140,7 @@ export default {
 .import-dialog {
   width: 40%;
 
-  @include bp_sp() {
+  @include sp() {
     width: 80%;
   }
 }
