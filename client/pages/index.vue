@@ -31,6 +31,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import axios from 'axios'
 import _ from 'lodash'
 import japanmesh from 'japanmesh'
 import GeoApi from '@/requests/geo-api'
@@ -139,11 +140,8 @@ export default {
       })
       const max = Math.max(...res.data.map((d) => d.count))
       const codes = res.data.map((d) => d.address.code)
-      const shapeApi = new GeoApi('/addresses/shape', {
-        codes: codes.toString(),
-      })
-      const shapeRes = await shapeApi.get()
-      shapeRes.data.features.forEach((feature) => {
+      const shape = await this.fetchAddressShape(codes)
+      shape.features.forEach((feature) => {
         const d = res.data.filter((d) => d.address.code === feature.properties.code)[0]
         const opacity = (d.count / max) * 0.9
         feature.properties.count = d.count
@@ -151,8 +149,35 @@ export default {
         feature.properties.strokeWeight = 1
         feature.properties.fillOpacity = opacity
       })
-      geojsons.push(shapeRes.data)
+      geojsons.push(shape)
       return geojsons
+    },
+
+    fetchAddressShape(allCodes) {
+      const MAX_CODE_COUNT = 100 // APIのコードの最大指定数
+      const shape = {
+        features: [],
+        type: 'FeatureCollection',
+      }
+      // APIの最大コード指定数を超えるとエラーとなるため分割する
+      const codes = _.chunk(allCodes, MAX_CODE_COUNT)
+      return new Promise((resolve, reject) => {
+        const promises = codes.map((code) => {
+          const api = new GeoApi('/addresses/shape', { codes: code.toString() })
+          return api.get()
+        })
+        axios
+          .all(promises)
+          .then(
+            axios.spread((...results) => {
+              results.forEach((r) => r.data.features.forEach((f) => shape.features.push(f)))
+              resolve(shape)
+            })
+          )
+          .catch((e) => {
+            reject(e)
+          })
+      })
     },
 
     fetchMeshGeoJSON(locations, level) {

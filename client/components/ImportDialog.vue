@@ -112,7 +112,7 @@ export default {
     },
 
     getRandomLocations() {
-      const LIMIT = 100
+      const LIMIT = 1000
       const TARGET_MESH_CODE = '5339' // 東京近郊
       const locations = []
       const lv2codes = japanmesh.getCodes(TARGET_MESH_CODE)
