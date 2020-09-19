@@ -247,9 +247,10 @@ export default {
           count[code] = 1
         }
       })
-      return Object.entries(count).map(([code, count]) => {
+      const counts = Object.entries(count).map(([code, count]) => {
         return { code, count }
       })
+      return counts.sort((a, b) => b.count - a.count) // 件数多い順に並び替え
     },
 
     onMouseoutData(event) {
