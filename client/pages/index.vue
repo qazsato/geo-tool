@@ -132,7 +132,8 @@ export default {
         level,
       })
       const res = await api.post()
-      this.tableData = res.data.map((d) => {
+      const data = res.data.sort((a, b) => b.count - a.count) // 件数多い順に並び替え
+      this.tableData = data.map((d) => {
         return {
           key: d.address.name,
           count: d.count,

@@ -22,6 +22,7 @@
 
 <script>
 import Chart from 'chart.js'
+import 'chartjs-plugin-colorschemes'
 
 export default {
   props: {
@@ -64,15 +65,36 @@ export default {
     },
 
     createChart() {
+      if (this.chart) {
+        this.chart.destroy()
+      }
+      const chartData = []
+      const max = 10
+      this.data.forEach((d, i) => {
+        if (i < max) {
+          chartData.push(d)
+        } else if (chartData[max]) {
+          chartData[max].count += d.count
+        } else {
+          chartData.push({ key: 'その他', count: d.count })
+        }
+      })
       this.chart = new Chart(this.$refs.chart, {
         type: 'pie',
         data: {
-          labels: this.data.map((d) => d.key),
+          labels: chartData.map((d) => d.key),
           datasets: [
             {
-              data: this.data.map((d) => d.count),
+              data: chartData.map((d) => d.count),
             },
           ],
+        },
+        options: {
+          plugins: {
+            colorschemes: {
+              scheme: 'tableau.GreenOrangeTeal12',
+            },
+          },
         },
       })
     },
