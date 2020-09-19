@@ -24,6 +24,7 @@
 
 <script>
 import japanmesh from 'japanmesh'
+const MAX_COUNT = 10000
 
 export default {
   props: {
@@ -73,6 +74,13 @@ export default {
     },
 
     onImport() {
+      if (this.locations.length > MAX_COUNT) {
+        this.$notify.error({
+          title: 'Error',
+          message: `解析できるデータは最大${MAX_COUNT}件です`,
+        })
+        return
+      }
       if (!this.isValidText()) {
         this.$notify.error({
           title: 'Error',

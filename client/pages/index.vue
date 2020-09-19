@@ -107,7 +107,12 @@ export default {
       const secondItem = this.cascader[1]
       if (firstItem === 'address') {
         const level = Number(secondItem)
-        this.geojsons = await this.fetchAddressGeoJSON(this.locations, level)
+        this.geojsons = await this.fetchAddressGeoJSON(this.locations, level).catch((e) => {
+          this.$notify.error({
+            title: 'Error',
+            message: e.response.data.error.message,
+          })
+        })
       } else if (firstItem === 'mesh') {
         const level = Number(secondItem)
         this.geojsons = this.fetchMeshGeoJSON(this.locations, level)
@@ -151,26 +156,33 @@ export default {
     },
 
     fetchMeshGeoJSON(locations, level) {
-      const geojsons = []
-      const counts = this.calcCountGroupByCode(locations, level)
-      this.tableData = counts.map((c, i) => {
-        return {
-          key: c.code,
-          count: c.count,
-        }
-      })
-      const max = Math.max(...counts.map((c) => c.count))
-      counts.forEach((c) => {
-        const opacity = (c.count / max) * 0.9
-        const geojson = japanmesh.toGeoJSON(c.code, {
-          code: c.code,
-          count: c.count,
-          strokeWeight: 1,
-          fillOpacity: opacity,
+      try {
+        const geojsons = []
+        const counts = this.calcCountGroupByCode(locations, level)
+        this.tableData = counts.map((c, i) => {
+          return {
+            key: c.code,
+            count: c.count,
+          }
         })
-        geojsons.push(geojson)
-      })
-      return geojsons
+        const max = Math.max(...counts.map((c) => c.count))
+        counts.forEach((c) => {
+          const opacity = (c.count / max) * 0.9
+          const geojson = japanmesh.toGeoJSON(c.code, {
+            code: c.code,
+            count: c.count,
+            strokeWeight: 1,
+            fillOpacity: opacity,
+          })
+          geojsons.push(geojson)
+        })
+        return geojsons
+      } catch (e) {
+        this.$notify.error({
+          title: 'Error',
+          message: '地域メッシュの変換に失敗しました',
+        })
+      }
     },
 
     fetchHeatmap(locations) {

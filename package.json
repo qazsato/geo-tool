@@ -31,7 +31,7 @@
     "chart.js": "2.9.3",
     "element-ui": "2.13.2",
     "google-maps-api-loader": "1.1.1",
-    "japanmesh": "0.1.0",
+    "japanmesh": "0.1.1",
     "local-storage": "2.0.0",
     "lodash": "4.17.20",
     "nuxt": "2.13.0",
