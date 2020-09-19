@@ -15,4 +15,4 @@ https://tool.geo.qazsato.com
 3. ヒートマップ
 4. マーカークラスタリング
 
-![Geo Tool](https://user-images.githubusercontent.com/5030713/93597137-844a7f80-f9f5-11ea-84b7-5a8762e67b7b.png)
+![Geo Tool](https://user-images.githubusercontent.com/5030713/93666755-b0303880-fabb-11ea-9788-f1055cdc2b65.png)
