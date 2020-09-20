@@ -55,6 +55,22 @@ export default {
     drawerTitle() {
       return `ポリゴンデータ (全${this.tableData.length}件)`
     },
+
+    isAddress() {
+      return this.cascader[0] === 'address'
+    },
+
+    isMesh() {
+      return this.cascader[0] === 'mesh'
+    },
+
+    isHeatmap() {
+      return this.cascader[0] === 'heatmap'
+    },
+
+    isMarkerCluster() {
+      return this.cascader[0] === 'cluster'
+    },
   },
 
   watch: {
@@ -100,11 +116,9 @@ export default {
     async drawMap() {
       this.loading = true
       this.clearData()
-      const firstItem = this.cascader[0]
-      const secondItem = this.cascader[1]
-      if (firstItem === 'address') {
+      if (this.isAddress) {
         try {
-          const level = Number(secondItem)
+          const level = Number(this.cascader[1])
           const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, level)
           this.tableData = counts
           this.geojsons = geojsons
@@ -114,9 +128,9 @@ export default {
             message: e.response.data.error.message,
           })
         }
-      } else if (firstItem === 'mesh') {
+      } else if (this.isMesh) {
         try {
-          const level = Number(secondItem)
+          const level = Number(this.cascader[1])
           const { counts, geojsons } = fetchMeshGeoJSON(this.locations, level)
           this.tableData = counts
           this.geojsons = geojsons
@@ -126,9 +140,9 @@ export default {
             message: '地域メッシュの変換に失敗しました',
           })
         }
-      } else if (firstItem === 'heatmap') {
+      } else if (this.isHeatmap) {
         this.heatmap = fetchHeatmap(this.google, this.locations)
-      } else if (firstItem === 'cluster') {
+      } else if (this.isMarkerCluster) {
         this.markers = fetchMarkers(this.google, this.locations)
       }
       this.loading = false
@@ -147,7 +161,7 @@ export default {
     },
 
     onMousemoveData(event) {
-      if (this.cascader[0] !== 'address') {
+      if (!this.isAddress) {
         return
       }
       this.infowindows = []
@@ -163,7 +177,7 @@ export default {
     },
 
     onMouseoverData(event) {
-      if (this.cascader[0] !== 'mesh') {
+      if (!this.isMesh) {
         return
       }
       const code = event.feature.getProperty('code')
