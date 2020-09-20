@@ -4,9 +4,16 @@
 
 <script>
 export default {
+  props: {
+    cascader: {
+      required: true,
+      type: Array,
+    },
+  },
+
   data() {
     return {
-      value: 'cluster',
+      value: this.cascader,
       options: [
         {
           value: 'address',

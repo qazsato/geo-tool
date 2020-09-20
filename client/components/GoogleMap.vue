@@ -91,11 +91,13 @@ export default {
     color(val) {
       this.drawData()
       ls(LS_COLOR_KEY, this.color)
+      this.$emit('stateChanged', this.getMapState())
     },
 
     theme(val) {
       this.map.setMapTypeId(val)
       ls(LS_THEME_KEY, this.theme)
+      this.$emit('stateChanged', this.getMapState())
     },
 
     markers(val) {
@@ -200,6 +202,7 @@ export default {
 
     bindMap() {
       this.map.addListener('click', (e) => this.$emit('click', e))
+      this.map.addListener('bounds_changed', (e) => this.$emit('stateChanged', this.getMapState()))
       this.map.data.addListener('click', (e) => this.$emit('clickData', e))
       this.map.data.addListener('mouseout', (e) => this.$emit('mouseoutData', e))
       this.map.data.addListener('mousemove', (e) => this.$emit('mousemoveData', e))
@@ -241,6 +244,15 @@ export default {
         }
       })
       return locations
+    },
+
+    getMapState() {
+      return {
+        center: this.map.center,
+        zoom: this.map.zoom,
+        theme: this.theme,
+        color: this.color,
+      }
     },
   },
 }

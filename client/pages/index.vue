@@ -6,9 +6,11 @@
     <el-main>
       <MapAction
         v-if="locations.length > 0"
+        :cascader="cascader"
         :data="tableData"
         class="map-acition"
         @changeCascader="onChangeCascader"
+        @clickShare="onClickShare"
         @clickTable="onClickTable"
       />
       <GoogleMap
@@ -16,6 +18,7 @@
         :geojsons="geojsons"
         :markers="markers"
         :heatmap="heatmap"
+        @stateChanged="onStateChanged"
         @mouseoutData="onMouseoutData"
         @mousemoveData="onMousemoveData"
         @mouseoverData="onMouseoverData"
@@ -23,7 +26,13 @@
       <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
     </el-main>
 
-    <ShareDialog :visible="shareDialogVisible" @close="closeDialog" />
+    <ShareDialog
+      :map-state="mapState"
+      :locations="locations"
+      :cascader="cascader"
+      :visible="shareDialogVisible"
+      @close="closeDialog"
+    />
     <ImportDialog :visible="importDialogVisible" @import="onImport" @close="closeDialog" />
   </el-container>
 </template>
@@ -39,6 +48,7 @@ export default {
       title: '',
       cascader: ['cluster'],
       loading: false,
+      mapState: null,
       locations: [],
       infowindows: [],
       geojsons: [],
@@ -87,12 +97,16 @@ export default {
   methods: {
     ...mapActions('map', { loadMap: 'load' }),
 
+    onClickImport() {
+      this.importDialogVisible = true
+    },
+
     onClickShare() {
       this.shareDialogVisible = true
     },
 
-    onClickImport() {
-      this.importDialogVisible = true
+    onClickTable() {
+      this.drawerVisible = true
     },
 
     closeDialog() {
@@ -156,6 +170,10 @@ export default {
       this.tableData = []
     },
 
+    onStateChanged(state) {
+      this.mapState = state
+    },
+
     onMouseoutData(event) {
       this.infowindows = []
     },
@@ -190,10 +208,6 @@ export default {
         disableAutoPan: true,
       })
       this.infowindows = [infowindow]
-    },
-
-    onClickTable() {
-      this.drawerVisible = true
     },
   },
 }
