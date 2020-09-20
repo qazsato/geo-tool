@@ -16,8 +16,10 @@
         <el-button @click="onClickSample">お試し</el-button>
       </el-tooltip>
       <div class="spacer"></div>
-      <el-button type="primary" :disabled="isDisabledImport" @click="onImport">読み込み</el-button>
-      <el-button @click="onClose">キャンセル</el-button>
+      <div>
+        <el-button type="primary" :disabled="isDisabledImport" @click="onImport">読み込み</el-button>
+        <el-button @click="onClose">キャンセル</el-button>
+      </div>
     </span>
   </el-dialog>
 </template>
@@ -138,8 +140,14 @@ export default {
 .dialog-footer {
   display: flex;
 
+  @include sp() {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .spacer {
     flex: 1;
+    margin-bottom: 20px;
   }
 }
 </style>

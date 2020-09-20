@@ -7,7 +7,7 @@
       <div v-if="locations.length > 0" class="button-area">
         <Cascader class="cascader" @change="onChange" />
         <!-- <el-button icon="el-icon-share" @click="onClickShare">地図を共有する</el-button> -->
-        <el-button v-if="tableData.length > 0" icon="el-icon-data-analysis" @click="onClickTable"
+        <el-button v-if="tableData.length > 0" class="table-button" icon="el-icon-data-analysis" @click="onClickTable"
           >表・グラフで確認する</el-button
         >
       </div>
@@ -333,6 +333,14 @@ export default {
   .cascader,
   .el-button {
     margin: 5px;
+  }
+}
+
+.table-button {
+  /deep/ span {
+    @include sp() {
+      display: none;
+    }
   }
 }
 </style>

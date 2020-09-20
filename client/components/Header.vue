@@ -3,7 +3,7 @@
     <h1 v-if="title" class="title">{{ title }}</h1>
     <Logo v-else href="/" />
     <div class="spacer"></div>
-    <el-button icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
+    <el-button class="import-button" icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
     <GithubCorner fill="#bbb" />
   </div>
 </template>
@@ -35,5 +35,13 @@ export default {
 
 .spacer {
   flex: 1;
+}
+
+.import-button {
+  /deep/ span {
+    @include sp() {
+      display: none;
+    }
+  }
 }
 </style>
