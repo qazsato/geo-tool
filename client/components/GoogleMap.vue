@@ -113,7 +113,7 @@ export default {
       color: this.getDefaultColor(),
       predefineColors: ['#409eff', '#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
       theme: this.getDefaultTheme(),
-      themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine'],
+      themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine', 'satellite'],
       localMarkers: [],
       localInfowindows: [],
       localHeatmap: null,
