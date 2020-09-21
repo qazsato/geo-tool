@@ -1,9 +1,9 @@
 <template>
   <div class="header">
-    <h1 v-if="title" class="title">{{ title }}</h1>
-    <Logo v-else href="/" />
+    <Logo href="/" />
+    <h1 class="title">{{ title }}</h1>
     <div class="spacer"></div>
-    <el-button class="import-button" icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
+    <slot></slot>
     <GithubCorner fill="#bbb" />
   </div>
 </template>
@@ -14,12 +14,6 @@ export default {
     title: {
       required: true,
       type: String,
-    },
-  },
-
-  methods: {
-    onClickImport() {
-      this.$emit('clickImport')
     },
   },
 }
@@ -33,15 +27,17 @@ export default {
   padding: 0 60px 0 20px;
 }
 
-.spacer {
-  flex: 1;
+.title {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: normal;
+  color: #303133;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.import-button {
-  /deep/ span {
-    @include sp() {
-      display: none;
-    }
-  }
+.spacer {
+  flex: 1;
 }
 </style>

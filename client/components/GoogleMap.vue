@@ -3,12 +3,12 @@
     <div ref="map" class="map"></div>
     <div class="controller">
       <el-color-picker
-        v-if="geojsons.length > 0"
+        v-if="isVisibleColorPicker"
         v-model="color"
         size="medium"
         :predefine="predefineColors"
       ></el-color-picker>
-      <el-select v-model="theme" size="medium">
+      <el-select v-if="isVisibleThemeSelect" v-model="theme" size="medium">
         <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
           <img :src="require(`~/assets/images/map/themes/${t}.png`)" />
           <span class="name">{{ t }}</span>
@@ -41,6 +41,34 @@ export default {
       default: '100%',
     },
 
+    defaultZoom: {
+      required: false,
+      type: Number,
+      default: 8,
+    },
+
+    defaultCenter: {
+      required: false,
+      type: Object,
+      default() {
+        const lat = config.default_location.lat
+        const lng = config.default_location.lng
+        return { lat, lng }
+      },
+    },
+
+    defaultTheme: {
+      required: false,
+      type: String,
+      default: null,
+    },
+
+    defaultColor: {
+      required: false,
+      type: String,
+      default: null,
+    },
+
     markers: {
       required: false,
       type: Array,
@@ -70,6 +98,12 @@ export default {
       type: Object,
       default: null,
     },
+
+    autoAdjust: {
+      required: false,
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -87,15 +121,27 @@ export default {
     }
   },
 
+  computed: {
+    isVisibleColorPicker() {
+      return this.defaultColor === null && this.geojsons.length > 0
+    },
+
+    isVisibleThemeSelect() {
+      return this.defaultTheme === null
+    },
+  },
+
   watch: {
     color(val) {
       this.drawData()
-      ls(LS_COLOR_KEY, this.color)
+      ls(LS_COLOR_KEY, val)
+      this.$emit('stateChanged', this.getMapState())
     },
 
     theme(val) {
       this.map.setMapTypeId(val)
-      ls(LS_THEME_KEY, this.theme)
+      ls(LS_THEME_KEY, val)
+      this.$emit('stateChanged', this.getMapState())
     },
 
     markers(val) {
@@ -114,6 +160,15 @@ export default {
       this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
       })
+
+      if (this.autoAdjust) {
+        const locations = this.markers.map((m) => {
+          return { lat: m.position.lat(), lng: m.position.lng() }
+        })
+        if (locations.length > 0) {
+          adjustViewPort(this.google, this.map, locations)
+        }
+      }
     },
 
     infowindows(val) {
@@ -138,9 +193,11 @@ export default {
 
       this.drawData()
 
-      const locations = this.getVisibleLocations()
-      if (locations.length > 0) {
-        adjustViewPort(this.google, this.map, locations)
+      if (this.autoAdjust) {
+        const locations = this.getVisibleLocations()
+        if (locations.length > 0) {
+          adjustViewPort(this.google, this.map, locations)
+        }
       }
     },
 
@@ -151,6 +208,15 @@ export default {
       } else {
         this.localHeatmap.setMap(null)
         this.localHeatmap = null
+      }
+
+      if (this.autoAdjust && this.heatmap) {
+        const locations = this.heatmap.data.i.map((p) => {
+          return { lat: p.lat(), lng: p.lng() }
+        })
+        if (locations.length > 0) {
+          adjustViewPort(this.google, this.map, locations)
+        }
       }
     },
   },
@@ -167,22 +233,26 @@ export default {
 
   methods: {
     getDefaultColor() {
+      if (this.defaultColor) {
+        return this.defaultColor
+      }
       const color = ls(LS_COLOR_KEY)
       return color || '#409eff'
     },
 
     getDefaultTheme() {
+      if (this.defaultTheme) {
+        return this.defaultTheme
+      }
       const theme = ls(LS_THEME_KEY)
       return theme || 'silver'
     },
 
     initMap() {
       if (!this.$refs.map) return
-      const lat = config.default_location.lat
-      const lng = config.default_location.lng
-      const position = new this.google.maps.LatLng(lat, lng)
+      const position = new this.google.maps.LatLng(this.defaultCenter.lat, this.defaultCenter.lng)
       this.map = new this.google.maps.Map(this.$refs.map, {
-        zoom: 8,
+        zoom: this.defaultZoom,
         center: position,
         mapTypeId: this.theme,
         clickableIcons: false,
@@ -200,6 +270,7 @@ export default {
 
     bindMap() {
       this.map.addListener('click', (e) => this.$emit('click', e))
+      this.map.addListener('bounds_changed', (e) => this.$emit('stateChanged', this.getMapState()))
       this.map.data.addListener('click', (e) => this.$emit('clickData', e))
       this.map.data.addListener('mouseout', (e) => this.$emit('mouseoutData', e))
       this.map.data.addListener('mousemove', (e) => this.$emit('mousemoveData', e))
@@ -242,6 +313,15 @@ export default {
       })
       return locations
     },
+
+    getMapState() {
+      return {
+        center: this.map.center,
+        zoom: this.map.zoom,
+        theme: this.theme,
+        color: this.color,
+      }
+    },
   },
 }
 </script>
@@ -261,6 +341,12 @@ export default {
   left: 5px;
   bottom: 30px;
   width: 110px;
+
+  /deep/ .el-input {
+    @include sp() {
+      font-size: 16px;
+    }
+  }
 }
 
 .theme-option {
@@ -275,7 +361,7 @@ export default {
     top: 0;
     left: 15px;
     color: #fff;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: bold;
     text-shadow: 1px 1px 1px #999;
   }

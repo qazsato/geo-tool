@@ -137,6 +137,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-textarea {
+  @include sp() {
+    font-size: 16px;
+  }
+}
+
 .dialog-footer {
   display: flex;
 

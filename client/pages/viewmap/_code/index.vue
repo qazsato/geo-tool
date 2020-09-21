@@ -2,65 +2,64 @@
   <Page v-loading="loading">
     <template v-slot:header>
       <Header :title="title">
-        <el-button class="import-button" icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
+        <el-button v-if="tableData.length > 0" class="table-button" icon="el-icon-data-analysis" @click="onClickTable"
+          >表・グラフで確認する</el-button
+        >
       </Header>
     </template>
 
-    <MapAction
-      v-if="locations.length > 0"
-      :cascader="cascader"
-      :data="tableData"
-      class="map-acition"
-      @changeCascader="onChangeCascader"
-      @clickShare="onClickShare"
-      @clickTable="onClickTable"
-    />
-
     <GoogleMap
+      :default-zoom="zoom"
+      :default-center="center"
+      :default-theme="theme"
+      :default-color="color"
       :infowindows="infowindows"
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
-      @stateChanged="onStateChanged"
+      :auto-adjust="false"
       @mouseoutData="onMouseoutData"
       @mousemoveData="onMousemoveData"
       @mouseoverData="onMouseoverData"
     />
 
     <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
-
-    <ShareDialog
-      :map-state="mapState"
-      :locations="locations"
-      :cascader="cascader"
-      :visible="shareDialogVisible"
-      @close="closeDialog"
-    />
-
-    <ImportDialog :visible="importDialogVisible" @import="onImport" @close="closeDialog" />
   </Page>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import GeoApi from '@/requests/geo-api'
 import { getInfowindowPosition } from '@/utils/mesh'
 import { fetchAddressGeoJSON, fetchMeshGeoJSON, fetchHeatmap, fetchMarkers } from '@/utils/map-data'
+import { mapTheme } from '@/constants/view-map-state'
 
 export default {
+  async asyncData(context) {
+    const code = context.params.code
+    const api = new GeoApi(`/view_map_states/${code}`)
+    const res = await api.get()
+    return {
+      data: res.data,
+      title: res.data.title,
+      locations: res.data.locations,
+      analysisType: res.data.analysis_type,
+      analysisLevel: res.data.analysis_level,
+      theme: mapTheme.get(res.data.map_theme).key,
+      color: res.data.polygon_color,
+      zoom: res.data.zoom,
+      center: res.data.location,
+    }
+  },
+
   data() {
     return {
-      title: '',
-      cascader: ['cluster'],
       loading: false,
-      mapState: null,
-      locations: [],
       infowindows: [],
       geojsons: [],
       markers: [],
       heatmap: null,
       tableData: [],
-      shareDialogVisible: false,
-      importDialogVisible: false,
       drawerVisible: false,
     }
   },
@@ -71,64 +70,37 @@ export default {
     },
 
     isAddress() {
-      return this.cascader[0] === 'address'
+      return this.analysisType === 1
     },
 
     isMesh() {
-      return this.cascader[0] === 'mesh'
+      return this.analysisType === 2
     },
 
     isHeatmap() {
-      return this.cascader[0] === 'heatmap'
+      return this.analysisType === 3
     },
 
     isMarkerCluster() {
-      return this.cascader[0] === 'cluster'
-    },
-  },
-
-  watch: {
-    locations(val) {
-      this.drawMap()
+      return this.analysisType === 4
     },
   },
 
   async mounted() {
     await this.loadMap()
     this.google = this.$store.state.map.google
+    this.drawMap()
   },
 
   methods: {
     ...mapActions('map', { loadMap: 'load' }),
 
-    onClickImport() {
-      this.importDialogVisible = true
-    },
-
-    onClickShare() {
-      this.shareDialogVisible = true
-    },
-
     onClickTable() {
       this.drawerVisible = true
     },
 
-    closeDialog() {
-      this.shareDialogVisible = false
-      this.importDialogVisible = false
-    },
-
     closeDrawer() {
       this.drawerVisible = false
-    },
-
-    onImport(locations) {
-      this.locations = locations
-    },
-
-    onChangeCascader(value) {
-      this.cascader = value
-      this.drawMap()
     },
 
     async drawMap() {
@@ -136,8 +108,7 @@ export default {
       this.clearData()
       if (this.isAddress) {
         try {
-          const level = Number(this.cascader[1])
-          const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, level)
+          const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, this.analysisLevel)
           this.tableData = counts
           this.geojsons = geojsons
         } catch (e) {
@@ -148,8 +119,7 @@ export default {
         }
       } else if (this.isMesh) {
         try {
-          const level = Number(this.cascader[1])
-          const { counts, geojsons } = fetchMeshGeoJSON(this.locations, level)
+          const { counts, geojsons } = fetchMeshGeoJSON(this.locations, this.analysisLevel)
           this.tableData = counts
           this.geojsons = geojsons
         } catch (e) {
@@ -172,10 +142,6 @@ export default {
       this.markers = []
       this.heatmap = null
       this.tableData = []
-    },
-
-    onStateChanged(state) {
-      this.mapState = state
     },
 
     onMouseoutData(event) {
@@ -218,14 +184,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.map-action {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
-}
-
-.import-button {
+.table-button {
   /deep/ span {
     @include sp() {
       display: none;
