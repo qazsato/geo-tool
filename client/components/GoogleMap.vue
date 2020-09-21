@@ -4,11 +4,11 @@
     <div class="controller">
       <el-color-picker
         v-if="isVisibleColorPicker"
-        v-model="colorValue"
+        v-model="color"
         size="medium"
         :predefine="predefineColors"
       ></el-color-picker>
-      <el-select v-if="isVisibleThemeSelect" v-model="themeValue" size="medium">
+      <el-select v-if="isVisibleThemeSelect" v-model="theme" size="medium">
         <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
           <img :src="require(`~/assets/images/map/themes/${t}.png`)" />
           <span class="name">{{ t }}</span>
@@ -41,13 +41,29 @@ export default {
       default: '100%',
     },
 
-    color: {
+    defaultZoom: {
+      required: false,
+      type: Number,
+      default: 8,
+    },
+
+    defaultCenter: {
+      required: false,
+      type: Object,
+      default() {
+        const lat = config.default_location.lat
+        const lng = config.default_location.lng
+        return { lat, lng }
+      },
+    },
+
+    defaultTheme: {
       required: false,
       type: String,
       default: null,
     },
 
-    theme: {
+    defaultColor: {
       required: false,
       type: String,
       default: null,
@@ -82,15 +98,21 @@ export default {
       type: Object,
       default: null,
     },
+
+    autoAdjust: {
+      required: false,
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
     return {
       google: null,
       map: null,
-      colorValue: this.getDefaultColor(),
+      color: this.getDefaultColor(),
       predefineColors: ['#409eff', '#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
-      themeValue: this.getDefaultTheme(),
+      theme: this.getDefaultTheme(),
       themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine'],
       localMarkers: [],
       localInfowindows: [],
@@ -101,22 +123,22 @@ export default {
 
   computed: {
     isVisibleColorPicker() {
-      return this.color === null && this.geojsons.length > 0
+      return this.defaultColor === null && this.geojsons.length > 0
     },
 
     isVisibleThemeSelect() {
-      return this.theme === null
+      return this.defaultTheme === null
     },
   },
 
   watch: {
-    colorValue(val) {
+    color(val) {
       this.drawData()
       ls(LS_COLOR_KEY, val)
       this.$emit('stateChanged', this.getMapState())
     },
 
-    themeValue(val) {
+    theme(val) {
       this.map.setMapTypeId(val)
       ls(LS_THEME_KEY, val)
       this.$emit('stateChanged', this.getMapState())
@@ -138,6 +160,15 @@ export default {
       this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
       })
+
+      if (this.autoAdjust) {
+        const locations = this.markers.map((m) => {
+          return { lat: m.position.lat(), lng: m.position.lng() }
+        })
+        if (locations.length > 0) {
+          adjustViewPort(this.google, this.map, locations)
+        }
+      }
     },
 
     infowindows(val) {
@@ -162,9 +193,11 @@ export default {
 
       this.drawData()
 
-      const locations = this.getVisibleLocations()
-      if (locations.length > 0) {
-        adjustViewPort(this.google, this.map, locations)
+      if (this.autoAdjust) {
+        const locations = this.getVisibleLocations()
+        if (locations.length > 0) {
+          adjustViewPort(this.google, this.map, locations)
+        }
       }
     },
 
@@ -175,6 +208,15 @@ export default {
       } else {
         this.localHeatmap.setMap(null)
         this.localHeatmap = null
+      }
+
+      if (this.autoAdjust && this.heatmap) {
+        const locations = this.heatmap.data.i.map((p) => {
+          return { lat: p.lat(), lng: p.lng() }
+        })
+        if (locations.length > 0) {
+          adjustViewPort(this.google, this.map, locations)
+        }
       }
     },
   },
@@ -191,16 +233,16 @@ export default {
 
   methods: {
     getDefaultColor() {
-      if (this.color) {
-        return this.color
+      if (this.defaultColor) {
+        return this.defaultColor
       }
       const color = ls(LS_COLOR_KEY)
       return color || '#409eff'
     },
 
     getDefaultTheme() {
-      if (this.theme) {
-        return this.theme
+      if (this.defaultTheme) {
+        return this.defaultTheme
       }
       const theme = ls(LS_THEME_KEY)
       return theme || 'silver'
@@ -208,13 +250,11 @@ export default {
 
     initMap() {
       if (!this.$refs.map) return
-      const lat = config.default_location.lat
-      const lng = config.default_location.lng
-      const position = new this.google.maps.LatLng(lat, lng)
+      const position = new this.google.maps.LatLng(this.defaultCenter.lat, this.defaultCenter.lng)
       this.map = new this.google.maps.Map(this.$refs.map, {
-        zoom: 8,
+        zoom: this.defaultZoom,
         center: position,
-        mapTypeId: this.themeValue,
+        mapTypeId: this.theme,
         clickableIcons: false,
         disableDefaultUI: true,
         zoomControl: true,
@@ -240,8 +280,8 @@ export default {
     drawData() {
       this.map.data.setStyle((feature) => {
         const strokeWeight = feature.getProperty('strokeWeight')
-        const strokeColor = this.colorValue
-        const fillColor = this.colorValue
+        const strokeColor = this.color
+        const fillColor = this.color
         const fillOpacity = feature.getProperty('fillOpacity')
         const zIndex = feature.getProperty('zIndex')
         const visible = feature.getProperty('visible')
@@ -278,8 +318,8 @@ export default {
       return {
         center: this.map.center,
         zoom: this.map.zoom,
-        theme: this.themeValue,
-        color: this.colorValue,
+        theme: this.theme,
+        color: this.color,
       }
     },
   },

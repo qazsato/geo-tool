@@ -9,12 +9,15 @@
     </template>
 
     <GoogleMap
-      :theme="theme"
-      :color="color"
+      :default-zoom="zoom"
+      :default-center="center"
+      :default-theme="theme"
+      :default-color="color"
       :infowindows="infowindows"
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
+      :auto-adjust="false"
       @mouseoutData="onMouseoutData"
       @mousemoveData="onMousemoveData"
       @mouseoverData="onMouseoverData"
@@ -44,6 +47,8 @@ export default {
       analysisLevel: res.data.analysis_level,
       theme: mapTheme.get(res.data.map_theme).key,
       color: res.data.polygon_color,
+      zoom: res.data.zoom,
+      center: res.data.location,
     }
   },
 
