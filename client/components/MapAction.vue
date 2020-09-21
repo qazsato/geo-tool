@@ -49,6 +49,14 @@ export default {
     margin: 5px;
   }
 
+  .cascader {
+    /deep/ .el-input {
+      @include sp() {
+        font-size: 16px;
+      }
+    }
+  }
+
   .share-button,
   .table-button {
     /deep/ span {

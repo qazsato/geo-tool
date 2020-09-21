@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import GeoApi from '@/requests/geo-api'
+
 export default {
   props: {
     visible: {
@@ -64,6 +66,22 @@ export default {
       this.url = `https://tool.geo.qazsato.com/viewmap/${this.title}`
     },
 
+    async postShareMapState() {
+      const api = new GeoApi('/share_map_states', {
+        params: {
+          title: this.title,
+          zoom: this.mapState.zoom,
+          latitude: this.mapState.center.lat,
+          longitude: this.mapState.center.lng,
+          analysis_type: this.cascader[0],
+          analysis_level: this.cascader[1],
+          locations: this.locations,
+        },
+      })
+      const res = await api.post()
+      return `https://tool.geo.qazsato.com/viewmap/${res.data.code}`
+    },
+
     onCopyUrl() {
       const textArea = document.createElement('textarea')
       textArea.style.cssText = 'position:absolute;left:-100%'
@@ -83,6 +101,12 @@ export default {
 
   @include sp() {
     width: 80%;
+  }
+
+  .el-input {
+    @include sp() {
+      font-size: 16px;
+    }
   }
 }
 </style>

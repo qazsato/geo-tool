@@ -273,6 +273,12 @@ export default {
   left: 5px;
   bottom: 30px;
   width: 110px;
+
+  /deep/ .el-input {
+    @include sp() {
+      font-size: 16px;
+    }
+  }
 }
 
 .theme-option {
@@ -287,7 +293,7 @@ export default {
     top: 0;
     left: 15px;
     color: #fff;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: bold;
     text-shadow: 1px 1px 1px #999;
   }
