@@ -25,8 +25,10 @@ import ls from 'local-storage'
 import config from '@/config'
 import { adjustViewPort } from '@/utils/map'
 import { toLocations } from '@/utils/geojson'
+import { mapTheme } from '@/constants/view-map-state'
 const LS_COLOR_KEY = 'google-map-data-color'
 const LS_THEME_KEY = 'google-map-skin-theme'
+
 export default {
   props: {
     width: {
@@ -113,7 +115,7 @@ export default {
       color: this.getDefaultColor(),
       predefineColors: ['#409eff', '#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
       theme: this.getDefaultTheme(),
-      themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine', 'satellite'],
+      themes: mapTheme.enums.map((e) => e.key),
       localMarkers: [],
       localInfowindows: [],
       localHeatmap: null,
@@ -245,7 +247,7 @@ export default {
         return this.defaultTheme
       }
       const theme = ls(LS_THEME_KEY)
-      return theme || 'silver'
+      return theme || mapTheme.silver.key
     },
 
     initMap() {

@@ -45,12 +45,13 @@
 import { mapActions } from 'vuex'
 import { getInfowindowPosition } from '@/utils/mesh'
 import { fetchAddressGeoJSON, fetchMeshGeoJSON, fetchHeatmap, fetchMarkers } from '@/utils/map-data'
+import { analysisType } from '@/constants/view-map-state'
 
 export default {
   data() {
     return {
       title: '',
-      cascader: ['cluster'],
+      cascader: [analysisType.cluster.key],
       loading: false,
       mapState: null,
       locations: [],
@@ -71,19 +72,19 @@ export default {
     },
 
     isAddress() {
-      return this.cascader[0] === 'address'
+      return this.cascader[0] === analysisType.address.key
     },
 
     isMesh() {
-      return this.cascader[0] === 'mesh'
+      return this.cascader[0] === analysisType.mesh.key
     },
 
     isHeatmap() {
-      return this.cascader[0] === 'heatmap'
+      return this.cascader[0] === analysisType.heatmap.key
     },
 
     isMarkerCluster() {
-      return this.cascader[0] === 'cluster'
+      return this.cascader[0] === analysisType.cluster.key
     },
   },
 

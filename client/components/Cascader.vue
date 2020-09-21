@@ -3,6 +3,10 @@
 </template>
 
 <script>
+import { analysisType } from '@/constants/view-map-state'
+import { addressLevel, addressLevelName } from '@/constants/address'
+import { meshLevel, meshLevelName } from '@/constants/mesh'
+
 export default {
   props: {
     cascader: {
@@ -16,59 +20,59 @@ export default {
       value: this.cascader,
       options: [
         {
-          value: 'address',
+          value: analysisType.address.key,
           label: '住所',
           children: [
             {
-              value: '1',
-              label: '都道府県',
+              value: addressLevel.level1.value,
+              label: addressLevelName.level1.value,
             },
             {
-              value: '2',
-              label: '市区町村',
+              value: addressLevel.level2.value,
+              label: addressLevelName.level2.value,
             },
             {
-              value: '3',
-              label: '町丁・字等',
+              value: addressLevel.level3.value,
+              label: addressLevelName.level3.value,
             },
           ],
         },
         {
-          value: 'mesh',
+          value: analysisType.mesh.key,
           label: '地域メッシュ',
           children: [
             {
-              value: '1',
-              label: '1次メッシュ(80km)',
+              value: meshLevel.level1.value,
+              label: meshLevelName.level1.value,
             },
             {
-              value: '2',
-              label: '2次メッシュ(10km)',
+              value: meshLevel.level2.value,
+              label: meshLevelName.level2.value,
             },
             {
-              value: '3',
-              label: '3次メッシュ(1km)',
+              value: meshLevel.level3.value,
+              label: meshLevelName.level3.value,
             },
             {
-              value: '4',
-              label: '4次メッシュ(500m)',
+              value: meshLevel.level4.value,
+              label: meshLevelName.level4.value,
             },
             {
-              value: '5',
-              label: '5次メッシュ(250m)',
+              value: meshLevel.level5.value,
+              label: meshLevelName.level5.value,
             },
             {
-              value: '6',
-              label: '6次メッシュ(125m)',
+              value: meshLevel.level6.value,
+              label: meshLevelName.level6.value,
             },
           ],
         },
         {
-          value: 'heatmap',
+          value: analysisType.heatmap.key,
           label: 'ヒートマップ',
         },
         {
-          value: 'cluster',
+          value: analysisType.cluster.key,
           label: 'マーカークラスター',
         },
       ],
