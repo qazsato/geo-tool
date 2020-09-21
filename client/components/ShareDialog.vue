@@ -1,25 +1,32 @@
 <template>
   <el-dialog title="地図を共有する" :visible.sync="visible" :before-close="onClose" custom-class="share-dialog">
+    <!-- URL生成後 -->
     <template v-if="url">
       <el-input v-model="url">
         <el-tooltip slot="append" content="copy" placement="top">
           <el-button icon="el-icon-s-order" @click="onCopyUrl"></el-button>
         </el-tooltip>
       </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="onClose">閉じる</el-button>
+      </span>
     </template>
+    <!-- URL生成前 -->
     <template v-else>
       <el-input v-model="title" placeholder="タイトルを入力してください" maxlength="30" show-word-limit></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" :disabled="isDisabledCreate" :loading="loading" @click="onCreateMapUrl"
+          >作成する</el-button
+        >
+        <el-button @click="onClose">閉じる</el-button>
+      </span>
     </template>
-
-    <span slot="footer" class="dialog-footer">
-      <el-button v-if="!url" type="primary" :disabled="title.length === 0" @click="onCreateMapUrl">作成する</el-button>
-      <el-button @click="onClose">キャンセル</el-button>
-    </span>
   </el-dialog>
 </template>
 
 <script>
 import GeoApi from '@/requests/geo-api'
+import { analysisType } from '@/constants/view-map-state'
 
 export default {
   props: {
@@ -49,7 +56,14 @@ export default {
     return {
       title: '',
       url: '',
+      loading: false,
     }
+  },
+
+  computed: {
+    isDisabledCreate() {
+      return this.title.length === 0
+    },
   },
 
   methods: {
@@ -59,27 +73,32 @@ export default {
       this.$emit('close')
     },
 
-    onCreateMapUrl() {
-      console.log(this.mapState)
-      console.log(this.locations)
-      console.log(this.cascader)
-      this.url = `https://tool.geo.qazsato.com/viewmap/${this.title}`
+    async onCreateMapUrl() {
+      this.loading = true
+      const url = await this.postShareMapState().catch(() => {
+        this.$notify.error({
+          title: 'Error',
+          message: 'URLの生成に失敗しました',
+        })
+      })
+      this.url = url
+      this.loading = false
     },
 
     async postShareMapState() {
-      const api = new GeoApi('/share_map_states', {
-        params: {
-          title: this.title,
-          zoom: this.mapState.zoom,
-          latitude: this.mapState.center.lat,
-          longitude: this.mapState.center.lng,
-          analysis_type: this.cascader[0],
-          analysis_level: this.cascader[1],
-          locations: this.locations,
-        },
+      const type = analysisType.get(this.cascader[0]).value
+      const level = this.cascader[1]
+      const api = new GeoApi('/view_map_states', {
+        title: this.title,
+        zoom: this.mapState.zoom,
+        latitude: this.mapState.center.lat(),
+        longitude: this.mapState.center.lng(),
+        analysis_type: type,
+        analysis_level: level,
+        locations: this.locations,
       })
       const res = await api.post()
-      return `https://tool.geo.qazsato.com/viewmap/${res.data.code}`
+      return `${location.origin}/viewmap/${res.data.code}`
     },
 
     onCopyUrl() {
@@ -90,6 +109,12 @@ export default {
       textArea.select()
       document.execCommand('copy')
       document.body.removeChild(textArea)
+
+      this.$notify({
+        title: 'Success',
+        message: 'クリップボードにコピーしました',
+        type: 'success',
+      })
     },
   },
 }

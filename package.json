@@ -31,6 +31,7 @@
     "chart.js": "2.9.3",
     "chartjs-plugin-colorschemes": "0.4.0",
     "element-ui": "2.13.2",
+    "enum": "3.0.4",
     "google-maps-api-loader": "1.1.1",
     "japanmesh": "0.1.1",
     "local-storage": "2.0.0",
