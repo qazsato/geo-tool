@@ -1,23 +1,27 @@
 <template>
-  <el-container v-loading="loading" class="page">
-    <el-header>
-      <Header :title="title" />
-    </el-header>
-    <el-main>
-      <GoogleMap
-        :theme="theme"
-        :color="color"
-        :infowindows="infowindows"
-        :geojsons="geojsons"
-        :markers="markers"
-        :heatmap="heatmap"
-        @mouseoutData="onMouseoutData"
-        @mousemoveData="onMousemoveData"
-        @mouseoverData="onMouseoverData"
-      />
-      <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
-    </el-main>
-  </el-container>
+  <Page v-loading="loading">
+    <template v-slot:header>
+      <Header :title="title">
+        <el-button v-if="tableData.length > 0" class="table-button" icon="el-icon-data-analysis" @click="onClickTable"
+          >表・グラフで確認する</el-button
+        >
+      </Header>
+    </template>
+
+    <GoogleMap
+      :theme="theme"
+      :color="color"
+      :infowindows="infowindows"
+      :geojsons="geojsons"
+      :markers="markers"
+      :heatmap="heatmap"
+      @mouseoutData="onMouseoutData"
+      @mousemoveData="onMousemoveData"
+      @mouseoverData="onMouseoverData"
+    />
+
+    <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
+  </Page>
 </template>
 
 <script>
@@ -175,26 +179,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page {
-  width: 100%;
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-}
-
-.el-header {
-  padding: 0;
-}
-
-.el-main {
-  position: relative;
-  padding: 0;
-  height: 100%;
-}
-
-.map-action {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
+.table-button {
+  /deep/ span {
+    @include sp() {
+      display: none;
+    }
+  }
 }
 </style>

@@ -1,30 +1,33 @@
 <template>
-  <el-container v-loading="loading" class="page">
-    <el-header>
-      <Header :title="title" @clickShare="onClickShare" @clickImport="onClickImport" />
-    </el-header>
-    <el-main>
-      <MapAction
-        v-if="locations.length > 0"
-        :cascader="cascader"
-        :data="tableData"
-        class="map-acition"
-        @changeCascader="onChangeCascader"
-        @clickShare="onClickShare"
-        @clickTable="onClickTable"
-      />
-      <GoogleMap
-        :infowindows="infowindows"
-        :geojsons="geojsons"
-        :markers="markers"
-        :heatmap="heatmap"
-        @stateChanged="onStateChanged"
-        @mouseoutData="onMouseoutData"
-        @mousemoveData="onMousemoveData"
-        @mouseoverData="onMouseoverData"
-      />
-      <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
-    </el-main>
+  <Page v-loading="loading">
+    <template v-slot:header>
+      <Header :title="title">
+        <el-button class="import-button" icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
+      </Header>
+    </template>
+
+    <MapAction
+      v-if="locations.length > 0"
+      :cascader="cascader"
+      :data="tableData"
+      class="map-acition"
+      @changeCascader="onChangeCascader"
+      @clickShare="onClickShare"
+      @clickTable="onClickTable"
+    />
+
+    <GoogleMap
+      :infowindows="infowindows"
+      :geojsons="geojsons"
+      :markers="markers"
+      :heatmap="heatmap"
+      @stateChanged="onStateChanged"
+      @mouseoutData="onMouseoutData"
+      @mousemoveData="onMousemoveData"
+      @mouseoverData="onMouseoverData"
+    />
+
+    <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
 
     <ShareDialog
       :map-state="mapState"
@@ -33,8 +36,9 @@
       :visible="shareDialogVisible"
       @close="closeDialog"
     />
+
     <ImportDialog :visible="importDialogVisible" @import="onImport" @close="closeDialog" />
-  </el-container>
+  </Page>
 </template>
 
 <script>
@@ -214,26 +218,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page {
-  width: 100%;
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-}
-
-.el-header {
-  padding: 0;
-}
-
-.el-main {
-  position: relative;
-  padding: 0;
-  height: 100%;
-}
-
 .map-action {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 10;
+}
+
+.import-button {
+  /deep/ span {
+    @include sp() {
+      display: none;
+    }
+  }
 }
 </style>

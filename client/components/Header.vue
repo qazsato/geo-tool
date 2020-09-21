@@ -3,7 +3,7 @@
     <Logo href="/" />
     <h1 class="title">{{ title }}</h1>
     <div class="spacer"></div>
-    <el-button class="import-button" icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
+    <slot></slot>
     <GithubCorner fill="#bbb" />
   </div>
 </template>
@@ -14,12 +14,6 @@ export default {
     title: {
       required: true,
       type: String,
-    },
-  },
-
-  methods: {
-    onClickImport() {
-      this.$emit('clickImport')
     },
   },
 }
@@ -45,13 +39,5 @@ export default {
 
 .spacer {
   flex: 1;
-}
-
-.import-button {
-  /deep/ span {
-    @include sp() {
-      display: none;
-    }
-  }
 }
 </style>
