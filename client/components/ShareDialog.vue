@@ -26,7 +26,7 @@
 
 <script>
 import GeoApi from '@/requests/geo-api'
-import { analysisType } from '@/constants/view-map-state'
+import { analysisType, mapTheme } from '@/constants/view-map-state'
 
 export default {
   props: {
@@ -96,6 +96,8 @@ export default {
         analysis_type: type,
         analysis_level: level,
         locations: this.locations,
+        map_theme: mapTheme.get(this.mapState.theme).value,
+        polygon_color: this.mapState.color,
       })
       const res = await api.post()
       return `${location.origin}/viewmap/${res.data.code}`

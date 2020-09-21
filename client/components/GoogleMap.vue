@@ -3,12 +3,12 @@
     <div ref="map" class="map"></div>
     <div class="controller">
       <el-color-picker
-        v-if="geojsons.length > 0"
-        v-model="color"
+        v-if="isVisibleColorPicker"
+        v-model="colorValue"
         size="medium"
         :predefine="predefineColors"
       ></el-color-picker>
-      <el-select v-model="theme" size="medium">
+      <el-select v-if="isVisibleThemeSelect" v-model="themeValue" size="medium">
         <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
           <img :src="require(`~/assets/images/map/themes/${t}.png`)" />
           <span class="name">{{ t }}</span>
@@ -39,6 +39,18 @@ export default {
       required: false,
       type: String,
       default: '100%',
+    },
+
+    color: {
+      required: false,
+      type: String,
+      default: null,
+    },
+
+    theme: {
+      required: false,
+      type: String,
+      default: null,
     },
 
     markers: {
@@ -76,9 +88,9 @@ export default {
     return {
       google: null,
       map: null,
-      color: this.getDefaultColor(),
+      colorValue: this.getDefaultColor(),
       predefineColors: ['#409eff', '#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
-      theme: this.getDefaultTheme(),
+      themeValue: this.getDefaultTheme(),
       themes: ['standard', 'silver', 'retro', 'night', 'dark', 'aubergine'],
       localMarkers: [],
       localInfowindows: [],
@@ -87,16 +99,26 @@ export default {
     }
   },
 
+  computed: {
+    isVisibleColorPicker() {
+      return this.color === null && this.geojsons.length > 0
+    },
+
+    isVisibleThemeSelect() {
+      return this.theme === null
+    },
+  },
+
   watch: {
-    color(val) {
+    colorValue(val) {
       this.drawData()
-      ls(LS_COLOR_KEY, this.color)
+      ls(LS_COLOR_KEY, val)
       this.$emit('stateChanged', this.getMapState())
     },
 
-    theme(val) {
+    themeValue(val) {
       this.map.setMapTypeId(val)
-      ls(LS_THEME_KEY, this.theme)
+      ls(LS_THEME_KEY, val)
       this.$emit('stateChanged', this.getMapState())
     },
 
@@ -169,11 +191,17 @@ export default {
 
   methods: {
     getDefaultColor() {
+      if (this.color) {
+        return this.color
+      }
       const color = ls(LS_COLOR_KEY)
       return color || '#409eff'
     },
 
     getDefaultTheme() {
+      if (this.theme) {
+        return this.theme
+      }
       const theme = ls(LS_THEME_KEY)
       return theme || 'silver'
     },
@@ -186,7 +214,7 @@ export default {
       this.map = new this.google.maps.Map(this.$refs.map, {
         zoom: 8,
         center: position,
-        mapTypeId: this.theme,
+        mapTypeId: this.themeValue,
         clickableIcons: false,
         disableDefaultUI: true,
         zoomControl: true,
@@ -212,8 +240,8 @@ export default {
     drawData() {
       this.map.data.setStyle((feature) => {
         const strokeWeight = feature.getProperty('strokeWeight')
-        const strokeColor = this.color
-        const fillColor = this.color
+        const strokeColor = this.colorValue
+        const fillColor = this.colorValue
         const fillOpacity = feature.getProperty('fillOpacity')
         const zIndex = feature.getProperty('zIndex')
         const visible = feature.getProperty('visible')
@@ -250,8 +278,8 @@ export default {
       return {
         center: this.map.center,
         zoom: this.map.zoom,
-        theme: this.theme,
-        color: this.color,
+        theme: this.themeValue,
+        color: this.colorValue,
       }
     },
   },
