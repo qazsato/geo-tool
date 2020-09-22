@@ -35,20 +35,24 @@ import { fetchAddressGeoJSON, fetchMeshGeoJSON, fetchHeatmap, fetchMarkers } fro
 import { mapTheme, analysisType } from '@/constants/view-map-state'
 
 export default {
-  async asyncData(context) {
-    const code = context.params.code
-    const api = new GeoApi(`/view_map_states/${code}`)
-    const res = await api.get()
-    return {
-      data: res.data,
-      title: res.data.title,
-      locations: res.data.locations,
-      analysisType: res.data.analysis_type,
-      analysisLevel: res.data.analysis_level,
-      theme: mapTheme.get(res.data.map_theme).key,
-      color: res.data.polygon_color,
-      zoom: res.data.zoom,
-      center: res.data.location,
+  async asyncData({ params, error }) {
+    try {
+      const code = params.code
+      const api = new GeoApi(`/view_map_states/${code}`)
+      const res = await api.get()
+      return {
+        data: res.data,
+        title: res.data.title,
+        locations: res.data.locations,
+        analysisType: res.data.analysis_type,
+        analysisLevel: res.data.analysis_level,
+        theme: mapTheme.get(res.data.map_theme).key,
+        color: res.data.polygon_color,
+        zoom: res.data.zoom,
+        center: res.data.location,
+      }
+    } catch (e) {
+      error({ statusCode: 404, message: 'Not Found' })
     }
   },
 
