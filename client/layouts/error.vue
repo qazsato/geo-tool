@@ -24,7 +24,7 @@ export default {
 
   head() {
     return {
-      title: '404 Not Found',
+      title: 'Error',
     }
   },
 }
