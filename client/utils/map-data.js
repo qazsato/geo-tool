@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import japanmesh from 'japanmesh'
 import GeoApi from '@/requests/geo-api'
-import { calcCountGroupByCode } from '@/utils/mesh'
+import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
 
 export const fetchAddressGeoJSON = async (locations, level) => {
   const geojsons = []
@@ -28,8 +28,8 @@ export const fetchAddressGeoJSON = async (locations, level) => {
   shape.features.forEach((feature) => {
     const d = res.data.filter((d) => d.address.code === feature.properties.code)[0]
     const opacity = (d.count / max) * 0.9
+    feature.properties.name = d.address.name
     feature.properties.count = d.count
-    feature.properties.addressName = d.address.name
     feature.properties.strokeWeight = 1
     feature.properties.fillOpacity = opacity
   })
@@ -48,6 +48,7 @@ export const fetchMeshGeoJSON = (locations, level) => {
     const opacity = (c.count / max) * 0.9
     const geojson = japanmesh.toGeoJSON(c.code, {
       code: c.code,
+      name: c.code,
       count: c.count,
       strokeWeight: 1,
       fillOpacity: opacity,
@@ -100,4 +101,31 @@ function fetchAddressShape(allCodes) {
         reject(e)
       })
   })
+}
+
+export const createAddressCountInfowindow = (google, event) => {
+  const name = event.feature.getProperty('name')
+  const count = event.feature.getProperty('count')
+  const position = event.latLng
+  const infowindow = new google.maps.InfoWindow({
+    content: `${name} : ${count}件`,
+    position,
+    pixelOffset: new google.maps.Size(0, -5),
+    disableAutoPan: true,
+  })
+  return infowindow
+}
+
+export const createMeshCountInfowindow = (google, geojsons, event) => {
+  const code = event.feature.getProperty('code')
+  const name = event.feature.getProperty('name')
+  const count = event.feature.getProperty('count')
+  const geojson = geojsons.filter((g) => g.properties.code === code)[0]
+  const position = getInfowindowPosition(google, geojson)
+  const infowindow = new google.maps.InfoWindow({
+    content: `${name} : ${count}件`,
+    position,
+    disableAutoPan: true,
+  })
+  return infowindow
 }

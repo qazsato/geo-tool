@@ -43,8 +43,14 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { getInfowindowPosition } from '@/utils/mesh'
-import { fetchAddressGeoJSON, fetchMeshGeoJSON, fetchHeatmap, fetchMarkers } from '@/utils/map-data'
+import {
+  fetchAddressGeoJSON,
+  fetchMeshGeoJSON,
+  fetchHeatmap,
+  fetchMarkers,
+  createAddressCountInfowindow,
+  createMeshCountInfowindow,
+} from '@/utils/map-data'
 import { analysisType } from '@/constants/view-map-state'
 
 export default {
@@ -184,35 +190,20 @@ export default {
     },
 
     onMousemoveData(event) {
-      if (!this.isAddress) {
-        return
+      if (this.isAddress) {
+        const infowindow = createAddressCountInfowindow(this.google, event)
+        this.infowindows = [infowindow]
       }
-      this.infowindows = []
-      const count = event.feature.getProperty('count')
-      const addressName = event.feature.getProperty('addressName')
-      const infowindow = new this.google.maps.InfoWindow({
-        content: `${addressName} : ${count}件`,
-        position: event.latLng,
-        pixelOffset: new this.google.maps.Size(0, -5),
-        disableAutoPan: true,
-      })
-      this.infowindows = [infowindow]
     },
 
     onMouseoverData(event) {
-      if (!this.isMesh) {
-        return
+      if (this.isAddress) {
+        const infowindow = createAddressCountInfowindow(this.google, event)
+        this.infowindows = [infowindow]
+      } else if (this.isMesh) {
+        const infowindow = createMeshCountInfowindow(this.google, this.geojsons, event)
+        this.infowindows = [infowindow]
       }
-      const code = event.feature.getProperty('code')
-      const count = event.feature.getProperty('count')
-      const geojson = this.geojsons.filter((g) => g.properties.code === code)[0]
-      const position = getInfowindowPosition(this.google, geojson)
-      const infowindow = new this.google.maps.InfoWindow({
-        content: `${code} : ${count}件`,
-        position,
-        disableAutoPan: true,
-      })
-      this.infowindows = [infowindow]
     },
   },
 
