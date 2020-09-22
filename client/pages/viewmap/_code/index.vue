@@ -180,6 +180,12 @@ export default {
       this.infowindows = [infowindow]
     },
   },
+
+  head() {
+    return {
+      title: this.title,
+    }
+  },
 }
 </script>
 

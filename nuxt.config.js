@@ -7,14 +7,14 @@ module.exports = {
   target: 'server',
 
   head: {
-    title: 'Geo Tool',
+    titleTemplate: '%s - Geo Tool',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
-        content: '地図上で緯度経度を可視化するツール',
+        content: '',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],

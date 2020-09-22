@@ -215,6 +215,12 @@ export default {
       this.infowindows = [infowindow]
     },
   },
+
+  head() {
+    return {
+      title: 'TOP',
+    }
+  },
 }
 </script>
 
