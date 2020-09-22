@@ -32,7 +32,7 @@ import { mapActions } from 'vuex'
 import GeoApi from '@/requests/geo-api'
 import { getInfowindowPosition } from '@/utils/mesh'
 import { fetchAddressGeoJSON, fetchMeshGeoJSON, fetchHeatmap, fetchMarkers } from '@/utils/map-data'
-import { mapTheme } from '@/constants/view-map-state'
+import { mapTheme, analysisType } from '@/constants/view-map-state'
 
 export default {
   async asyncData(context) {
@@ -70,19 +70,19 @@ export default {
     },
 
     isAddress() {
-      return this.analysisType === 1
+      return this.analysisType === analysisType.address.value
     },
 
     isMesh() {
-      return this.analysisType === 2
+      return this.analysisType === analysisType.mesh.value
     },
 
     isHeatmap() {
-      return this.analysisType === 3
+      return this.analysisType === analysisType.heatmap.value
     },
 
     isMarkerCluster() {
-      return this.analysisType === 4
+      return this.analysisType === analysisType.cluster.value
     },
   },
 
