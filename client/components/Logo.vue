@@ -35,7 +35,6 @@ export default {
   line-height: 19px;
   text-decoration: none;
   font-weight: bold;
-  white-space: nowrap;
 
   @include sp() {
     min-width: 36px;
