@@ -14,7 +14,7 @@ module.exports = {
       {
         hid: 'description',
         name: 'description',
-        content: '',
+        content: 'Map Visualization Tool',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
