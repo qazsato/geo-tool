@@ -218,7 +218,7 @@ export default {
 
   head() {
     return {
-      title: 'TOP',
+      title: 'Map',
     }
   },
 }
