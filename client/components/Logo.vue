@@ -26,7 +26,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 120px;
+  min-width: 120px;
   margin: 10px 0;
   padding: 5px 0;
   border-radius: 3px;
@@ -37,8 +37,20 @@ export default {
   font-weight: bold;
   white-space: nowrap;
 
+  @include sp() {
+    min-width: 36px;
+    padding: 8px 0;
+  }
+
+  > span {
+    margin-right: 6px;
+
+    @include sp() {
+      display: none;
+    }
+  }
+
   > img {
-    margin-left: 6px;
     width: 20px;
   }
 }
