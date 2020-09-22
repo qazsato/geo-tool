@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "octref.vetur",
+    "dbaeumer.vscode-eslint",
+    "shinnn.stylelint",
+    "editorconfig.editorconfig",
+    "msjsdiag.debugger-for-chrome",
+  ]
+}
