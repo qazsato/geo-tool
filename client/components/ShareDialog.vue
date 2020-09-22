@@ -7,6 +7,7 @@
           <el-button icon="el-icon-s-order" @click="onCopyUrl"></el-button>
         </el-tooltip>
       </el-input>
+      <p class="note">※ URLの有効期限は作成から30日間です</p>
       <span slot="footer" class="dialog-footer">
         <el-button @click="onClose">閉じる</el-button>
       </span>
@@ -121,6 +122,14 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.note {
+  text-align: right;
+  margin-top: 6px;
+  font-size: 12px;
+}
+</style>
 
 <style lang="scss">
 .share-dialog {
