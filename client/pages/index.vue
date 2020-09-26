@@ -209,7 +209,8 @@ export default {
 
   head() {
     return {
-      title: 'Map',
+      title: 'Geo Tool',
+      titleTemplate: '',
     }
   },
 }
