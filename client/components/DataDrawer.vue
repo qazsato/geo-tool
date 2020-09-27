@@ -113,7 +113,7 @@ export default {
   width: 40% !important;
   outline: 0;
 
-  @include sp() {
+  @include xs() {
     width: 100% !important;
   }
 

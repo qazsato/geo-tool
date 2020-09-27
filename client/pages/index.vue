@@ -226,7 +226,7 @@ export default {
 
 .import-button {
   /deep/ span {
-    @include sp() {
+    @include xs() {
       display: none;
     }
   }

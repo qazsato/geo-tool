@@ -187,7 +187,7 @@ export default {
 <style lang="scss" scoped>
 .table-button {
   /deep/ span {
-    @include sp() {
+    @include xs() {
       display: none;
     }
   }

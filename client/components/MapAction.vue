@@ -51,7 +51,7 @@ export default {
 
   .cascader {
     /deep/ .el-input {
-      @include sp() {
+      @include xs() {
         font-size: 16px;
       }
     }
@@ -60,7 +60,7 @@ export default {
   .share-button,
   .table-button {
     /deep/ span {
-      @include sp() {
+      @include xs() {
         display: none;
       }
     }

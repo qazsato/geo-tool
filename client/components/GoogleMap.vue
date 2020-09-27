@@ -345,7 +345,7 @@ export default {
   width: 110px;
 
   /deep/ .el-input {
-    @include sp() {
+    @include xs() {
       font-size: 16px;
     }
   }

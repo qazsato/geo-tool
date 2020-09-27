@@ -36,7 +36,7 @@ export default {
   text-decoration: none;
   font-weight: bold;
 
-  @include sp() {
+  @include xs() {
     min-width: 36px;
     padding: 8px 0;
   }
@@ -44,7 +44,7 @@ export default {
   > span {
     margin-right: 6px;
 
-    @include sp() {
+    @include xs() {
       display: none;
     }
   }

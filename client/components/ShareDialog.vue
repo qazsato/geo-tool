@@ -135,12 +135,12 @@ export default {
 .share-dialog {
   width: 40%;
 
-  @include sp() {
+  @include xs() {
     width: 80%;
   }
 
   .el-input {
-    @include sp() {
+    @include xs() {
       font-size: 16px;
     }
   }
