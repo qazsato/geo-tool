@@ -12,9 +12,20 @@
       :autosize="{ minRows: 10, maxRows: 10 }"
     ></el-input>
     <span slot="footer" class="dialog-footer">
-      <el-tooltip content="ランダムで生成した緯度経度を設定します" placement="top">
-        <el-button @click="onClickSample">お試し</el-button>
-      </el-tooltip>
+      <div class="help-area">
+        <el-tooltip content="ランダムで生成した緯度経度を設定します" placement="top">
+          <el-button @click="onClickSample">お試し</el-button>
+        </el-tooltip>
+
+        <el-popover placement="top" title="緯度経度の形式について" width="300" trigger="hover">
+          <ul class="popover-list">
+            <li>一行毎にカンマ区切りで緯度,経度の形式で入力してください。</li>
+            <li>指定できる最大件数は 10,000 です。</li>
+            <li>測地系は世界測地系 (WGS84) です。</li>
+          </ul>
+          <i slot="reference" class="about-icon el-icon-info"></i>
+        </el-popover>
+      </div>
       <div class="spacer"></div>
       <div>
         <el-button type="primary" :disabled="isDisabledImport" @click="onImport">読み込み</el-button>
@@ -138,7 +149,7 @@ export default {
 
 <style lang="scss" scoped>
 .el-textarea {
-  @include sp() {
+  @include xs() {
     font-size: 16px;
   }
 }
@@ -146,7 +157,7 @@ export default {
 .dialog-footer {
   display: flex;
 
-  @include sp() {
+  @include xs() {
     flex-direction: column;
     align-items: center;
   }
@@ -156,13 +167,30 @@ export default {
     margin-bottom: 20px;
   }
 }
+
+.help-area {
+  display: flex;
+  align-items: center;
+
+  .about-icon {
+    padding: 5px;
+    margin-left: 10px;
+    font-size: 20px;
+    color: #666;
+  }
+}
+
+.popover-list {
+  padding-left: 20px;
+  padding-bottom: 10px;
+}
 </style>
 
 <style lang="scss">
 .import-dialog {
   width: 40%;
 
-  @include sp() {
+  @include md() {
     width: 80%;
   }
 }
