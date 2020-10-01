@@ -42,7 +42,15 @@ module.exports = {
     ],
   ],
 
-  modules: ['@nuxtjs/axios'],
+  modules: [
+    '@nuxtjs/axios',
+    [
+      '@nuxtjs/google-adsense',
+      {
+        id: 'ca-pub-3757647132963072',
+      },
+    ],
+  ],
 
   axios: {},
 
