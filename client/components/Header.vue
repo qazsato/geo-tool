@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <Logo href="/" />
+    <Logo url="/" />
     <h1 class="title">{{ title }}</h1>
     <div class="spacer"></div>
     <slot></slot>

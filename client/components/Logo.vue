@@ -1,21 +1,16 @@
 <template>
-  <a class="logo" :href="href" :target="target">
+  <nuxt-link class="logo" :to="url">
     <span>Geo Tool</span>
     <img src="~/assets/images/planet.svg" />
-  </a>
+  </nuxt-link>
 </template>
 
 <script>
 export default {
   props: {
-    href: {
+    url: {
       required: true,
       type: String,
-    },
-    target: {
-      required: false,
-      type: String,
-      default: null,
     },
   },
 }
