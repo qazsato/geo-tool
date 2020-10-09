@@ -7,7 +7,7 @@ import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
 export const fetchAddressGeoJSON = async (locations, level) => {
   const geojsons = []
   const api = new GeoApi('/analytics/addresses/contains', {
-    locations: locations.map((l) => `${l.lat},${l.lng}`),
+    locations,
     level,
   })
   const res = await api.post().catch((e) => {
