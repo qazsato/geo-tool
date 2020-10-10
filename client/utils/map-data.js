@@ -16,19 +16,19 @@ export const fetchAddressGeoJSON = async (locations, level) => {
   const data = res.data.sort((a, b) => b.count - a.count) // 件数多い順に並び替え
   const counts = data.map((d) => {
     return {
-      key: d.address.name,
+      key: d.address_name,
       count: d.count,
     }
   })
   const max = Math.max(...res.data.map((d) => d.count))
-  const codes = res.data.map((d) => d.address.code)
+  const codes = res.data.map((d) => d.address_code)
   const shape = await fetchAddressShape(codes).catch((e) => {
     throw e
   })
   shape.features.forEach((feature) => {
-    const d = res.data.filter((d) => d.address.code === feature.properties.code)[0]
+    const d = res.data.filter((d) => d.address_code === feature.properties.code)[0]
     const opacity = (d.count / max) * 0.9
-    feature.properties.name = d.address.name
+    feature.properties.name = d.address_name
     feature.properties.count = d.count
     feature.properties.strokeWeight = 1
     feature.properties.fillOpacity = opacity
