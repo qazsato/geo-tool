@@ -86,7 +86,10 @@ function fetchAddressShape(allCodes) {
   const codes = _.chunk(allCodes, MAX_CODE_COUNT)
   return new Promise((resolve, reject) => {
     const promises = codes.map((code) => {
-      const api = new GeoApi('/addresses/shapes', { codes: code.toString() })
+      const api = new GeoApi('/addresses/shapes', {
+        codes: code.toString(),
+        limit: MAX_CODE_COUNT,
+      })
       return api.get()
     })
     axios
