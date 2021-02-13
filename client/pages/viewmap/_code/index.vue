@@ -17,7 +17,7 @@
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
-      :auto-adjust="false"
+      enable-marker-cluster
       @mouseoutData="onMouseoutData"
       @mousemoveData="onMousemoveData"
       @mouseoverData="onMouseoverData"

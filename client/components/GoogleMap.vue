@@ -101,10 +101,28 @@ export default {
       default: null,
     },
 
-    autoAdjust: {
+    enableMarkerCluster: {
       required: false,
       type: Boolean,
-      default: true,
+      default: false,
+    },
+
+    autoAdjustMarkers: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+
+    autoAdjustGeojsons: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+
+    autoAdjustHeatmap: {
+      required: false,
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -119,7 +137,6 @@ export default {
       localMarkers: [],
       localInfowindows: [],
       localHeatmap: null,
-      localMarkerClusterer: null,
     }
   },
 
@@ -159,11 +176,13 @@ export default {
       })
       this.localMarkers = this.markers
 
-      this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
-        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-      })
+      if (this.enableMarkerCluster) {
+        this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
+          imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+        })
+      }
 
-      if (this.autoAdjust) {
+      if (this.autoAdjustMarkers) {
         const locations = this.markers.map((m) => {
           return { lat: m.position.lat(), lng: m.position.lng() }
         })
@@ -195,7 +214,7 @@ export default {
 
       this.drawData()
 
-      if (this.autoAdjust) {
+      if (this.autoAdjustGeojsons) {
         const locations = this.getVisibleLocations()
         if (locations.length > 0) {
           adjustViewPort(this.google, this.map, locations)
@@ -212,8 +231,8 @@ export default {
         this.localHeatmap = null
       }
 
-      if (this.autoAdjust && this.heatmap) {
-        const locations = this.heatmap.data.i.map((p) => {
+      if (this.autoAdjustHeatmap && this.heatmap) {
+        const locations = this.heatmap.data.Kb.map((p) => {
           return { lat: p.lat(), lng: p.lng() }
         })
         if (locations.length > 0) {

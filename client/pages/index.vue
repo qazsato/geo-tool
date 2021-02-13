@@ -21,6 +21,10 @@
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
+      auto-adjust-markers
+      auto-adjust-geojsons
+      auto-adjust-heatmap
+      enable-marker-cluster
       @stateChanged="onStateChanged"
       @mouseoutData="onMouseoutData"
       @mousemoveData="onMousemoveData"

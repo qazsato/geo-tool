@@ -96,7 +96,7 @@ function fetchAddressShape(allCodes) {
       .all(promises)
       .then(
         axios.spread((...results) => {
-          results.forEach((r) => r.data.forEach((geojson) => shape.features.push(geojson)))
+          results.forEach((r) => r.data.features.forEach((geojson) => shape.features.push(geojson)))
           resolve(shape)
         })
       )
