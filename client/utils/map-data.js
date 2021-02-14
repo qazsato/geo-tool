@@ -87,7 +87,7 @@ function fetchAddressShape(allCodes) {
   return new Promise((resolve, reject) => {
     const promises = codes.map((code) => {
       const api = new GeoApi('/addresses/shape', {
-        codes: code.toString(),
+        code: code.toString(),
         limit: MAX_CODE_COUNT,
       })
       return api.get()
