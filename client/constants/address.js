@@ -6,5 +6,5 @@ export const addressLevelName = new Enum({
   level1: '都道府県',
   level2: '市区町村',
   level3: '大字・町',
-  level4: '丁目等',
+  level4: '丁目・字等',
 })
