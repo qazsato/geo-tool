@@ -35,6 +35,10 @@ export default {
               value: addressLevel.level3.value,
               label: addressLevelName.level3.value,
             },
+            {
+              value: addressLevel.level4.value,
+              label: addressLevelName.level4.value,
+            },
           ],
         },
         {
