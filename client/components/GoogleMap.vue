@@ -8,7 +8,7 @@
         size="medium"
         :predefine="predefineColors"
       ></el-color-picker>
-      <el-select v-if="isVisibleThemeSelect" v-model="theme" size="medium">
+      <el-select v-model="theme" size="medium">
         <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
           <img :src="require(`~/assets/images/map/themes/${t}.png`)" />
           <span class="name">{{ t }}</span>
@@ -142,11 +142,7 @@ export default {
 
   computed: {
     isVisibleColorPicker() {
-      return this.defaultColor === null && this.geojsons.length > 0
-    },
-
-    isVisibleThemeSelect() {
-      return this.defaultTheme === null
+      return this.geojsons.length > 0
     },
   },
 
