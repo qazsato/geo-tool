@@ -166,15 +166,15 @@ export default {
 
       const diffMarkers = _.difference(this.localMarkers, this.markers)
       diffMarkers.forEach((marker) => marker.setMap(null))
-
-      this.markers.forEach((marker) => {
-        marker.setMap(this.map)
-      })
       this.localMarkers = this.markers
 
       if (this.enableMarkerCluster) {
         this.markerClusterer = new MarkerClusterer(this.map, this.markers, {
           imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+        })
+      } else {
+        this.markers.forEach((marker) => {
+          marker.setMap(this.map)
         })
       }
 
