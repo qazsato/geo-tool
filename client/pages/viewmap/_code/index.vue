@@ -1,12 +1,18 @@
 <template>
   <Page v-loading="loading">
     <template v-slot:header>
-      <Header :title="title">
-        <el-button v-if="tableData.length > 0" class="table-button" icon="el-icon-data-analysis" @click="onClickTable"
-          >表・グラフで確認する</el-button
-        >
-      </Header>
+      <Header :title="title"></Header>
     </template>
+
+    <MapAction
+      v-if="locations.length > 0"
+      :cascader="cascader"
+      :data="tableData"
+      class="map-acition"
+      visible-table-button
+      @changeCascader="onChangeCascader"
+      @clickTable="onClickTable"
+    />
 
     <GoogleMap
       :default-zoom="zoom"
@@ -46,12 +52,15 @@ export default {
       const code = params.code
       const api = new GeoApi(`/view_map_states/${code}`)
       const res = await api.get()
+      const cascader = [analysisType.get(res.data.analysis_type)]
+      if (res.data.analysis_level) {
+        cascader.push(res.data.analysis_level)
+      }
       return {
         data: res.data,
         title: res.data.title,
         locations: res.data.locations,
-        analysisType: res.data.analysis_type,
-        analysisLevel: res.data.analysis_level,
+        cascader,
         theme: mapTheme.get(res.data.map_theme).key,
         color: res.data.polygon_color,
         zoom: res.data.zoom,
@@ -80,19 +89,19 @@ export default {
     },
 
     isAddress() {
-      return this.analysisType === analysisType.address.value
+      return this.cascader[0] === analysisType.address.key
     },
 
     isMesh() {
-      return this.analysisType === analysisType.mesh.value
+      return this.cascader[0] === analysisType.mesh.key
     },
 
     isHeatmap() {
-      return this.analysisType === analysisType.heatmap.value
+      return this.cascader[0] === analysisType.heatmap.key
     },
 
     isMarkerCluster() {
-      return this.analysisType === analysisType.cluster.value
+      return this.cascader[0] === analysisType.cluster.key
     },
   },
 
@@ -118,7 +127,8 @@ export default {
       this.clearData()
       if (this.isAddress) {
         try {
-          const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, this.analysisLevel)
+          const level = Number(this.cascader[1])
+          const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, level)
           this.tableData = counts
           this.geojsons = geojsons
         } catch (e) {
@@ -129,7 +139,8 @@ export default {
         }
       } else if (this.isMesh) {
         try {
-          const { counts, geojsons } = fetchMeshGeoJSON(this.locations, this.analysisLevel)
+          const level = Number(this.cascader[1])
+          const { counts, geojsons } = fetchMeshGeoJSON(this.locations, level)
           this.tableData = counts
           this.geojsons = geojsons
         } catch (e) {
@@ -174,6 +185,11 @@ export default {
         this.infowindows = [infowindow]
       }
     },
+
+    onChangeCascader(value) {
+      this.cascader = value
+      this.drawMap()
+    },
   },
 
   head() {
@@ -185,6 +201,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.map-action {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
 .table-button {
   /deep/ span {
     @include xs() {

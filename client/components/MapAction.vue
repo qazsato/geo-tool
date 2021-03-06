@@ -1,8 +1,14 @@
 <template>
   <div class="map-action">
     <Cascader :cascader="cascader" class="cascader" @change="onChangeCascader" />
-    <el-button class="share-button" icon="el-icon-share" @click="onClickShare">地図を共有する</el-button>
-    <el-button v-if="data.length > 0" class="table-button" icon="el-icon-data-analysis" @click="onClickTable"
+    <el-button v-if="visibleShareButton" class="share-button" icon="el-icon-share" @click="onClickShare"
+      >地図を共有する</el-button
+    >
+    <el-button
+      v-if="visibleTableButton && data.length > 0"
+      class="table-button"
+      icon="el-icon-data-analysis"
+      @click="onClickTable"
       >表・グラフで確認する</el-button
     >
   </div>
@@ -19,6 +25,16 @@ export default {
     data: {
       required: true,
       type: Array,
+    },
+
+    visibleShareButton: {
+      required: false,
+      type: Boolean,
+    },
+
+    visibleTableButton: {
+      required: false,
+      type: Boolean,
     },
   },
 

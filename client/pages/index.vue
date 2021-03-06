@@ -11,6 +11,8 @@
       :cascader="cascader"
       :data="tableData"
       class="map-acition"
+      visible-share-button
+      visible-table-button
       @changeCascader="onChangeCascader"
       @clickShare="onClickShare"
       @clickTable="onClickTable"
