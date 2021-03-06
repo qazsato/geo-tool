@@ -20,7 +20,7 @@
         <el-popover placement="top" title="緯度経度の形式について" width="300" trigger="hover">
           <ul class="popover-list">
             <li>一行毎にカンマ区切りで緯度,経度の形式で入力してください。</li>
-            <li>指定できる最大件数は 10,000 です。</li>
+            <li>指定できる最大件数は {{ MAX_COUNT.toLocaleString() }} です。</li>
             <li>測地系は世界測地系 (WGS84) です。</li>
           </ul>
           <i slot="reference" class="about-icon el-icon-info"></i>
@@ -37,7 +37,6 @@
 
 <script>
 import japanmesh from 'japanmesh'
-const MAX_COUNT = 10000
 
 export default {
   props: {
@@ -49,6 +48,7 @@ export default {
 
   data() {
     return {
+      MAX_COUNT: 10000,
       textarea: '',
       placeholder: 'latitude,longitude',
     }
@@ -87,10 +87,10 @@ export default {
     },
 
     onImport() {
-      if (this.locations.length > MAX_COUNT) {
+      if (this.locations.length > this.MAX_COUNT) {
         this.$notify.error({
           title: 'Error',
-          message: `解析できるデータは最大${MAX_COUNT}件です`,
+          message: `解析できるデータは最大${this.MAX_COUNT}件です`,
         })
         return
       }
