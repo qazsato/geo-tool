@@ -23,9 +23,9 @@
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
-      auto-adjust-markers
-      auto-adjust-geojsons
-      auto-adjust-heatmap
+      :auto-adjust-markers="isAutoAdjust"
+      :auto-adjust-geojsons="isAutoAdjust"
+      :auto-adjust-heatmap="isAutoAdjust"
       enable-marker-cluster
       @stateChanged="onStateChanged"
       @mouseoutData="onMouseoutData"
@@ -75,6 +75,7 @@ export default {
       shareDialogVisible: false,
       importDialogVisible: false,
       drawerVisible: false,
+      isAutoAdjust: false,
     }
   },
 
@@ -136,7 +137,10 @@ export default {
     },
 
     onImport(locations) {
+      // MEMO: インポート時のみ拡縮の自動調整をおこなう
+      this.isAutoAdjust = true
       this.locations = locations
+      setTimeout(() => (this.isAutoAdjust = false))
     },
 
     onChangeCascader(value) {
