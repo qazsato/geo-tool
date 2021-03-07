@@ -243,7 +243,7 @@ export default {
   head() {
     return {
       title: this.title,
-      description: this.description || 'Map Visualization Tool',
+      meta: [{ hid: 'description', name: 'description', content: this.description || 'Map Visualization Tool' }],
     }
   },
 }
