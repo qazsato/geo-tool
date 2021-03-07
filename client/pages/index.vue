@@ -49,6 +49,7 @@
       :map-state="mapState"
       :locations="locations"
       :cascader="cascader"
+      :count-range="countRange"
       :visible="shareDialogVisible"
       @close="closeDialog"
     />

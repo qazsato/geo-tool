@@ -63,6 +63,12 @@ export default {
       required: true,
       type: Array,
     },
+
+    countRange: {
+      required: false,
+      type: Array,
+      default: null,
+    },
   },
 
   data() {
@@ -83,6 +89,7 @@ export default {
   methods: {
     onClose() {
       this.title = ''
+      this.description = ''
       this.url = ''
       this.$emit('close')
     },
@@ -113,6 +120,8 @@ export default {
         locations: this.locations,
         map_theme: mapTheme.get(this.mapState.theme).value,
         polygon_color: this.mapState.color,
+        count_range_from: this.countRange ? this.countRange[0] : null,
+        count_range_to: this.countRange ? this.countRange[1] : null,
       })
       const res = await api.post()
       return `${location.origin}/viewmap/${res.data.code}`

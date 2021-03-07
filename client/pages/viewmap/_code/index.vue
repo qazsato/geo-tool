@@ -75,6 +75,10 @@ export default {
         color: res.data.polygon_color,
         zoom: res.data.zoom,
         center: res.data.location,
+        countRange:
+          res.data.count_range_from && res.data.count_range_to
+            ? [res.data.count_range_from, res.data.count_range_to]
+            : null,
       }
     } catch (e) {
       error({ statusCode: 404, message: 'Not Found' })
@@ -93,7 +97,6 @@ export default {
       drawerVisible: false,
       minCount: null,
       maxCount: null,
-      countRange: null,
     }
   },
 
