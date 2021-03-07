@@ -1,7 +1,7 @@
 <template>
   <Page v-loading="loading">
     <template v-slot:header>
-      <Header :title="title"></Header>
+      <Header :title="title" :description="description"></Header>
     </template>
 
     <MapAction
@@ -68,6 +68,7 @@ export default {
       return {
         data: res.data,
         title: res.data.title,
+        description: res.data.description,
         locations: res.data.locations,
         cascader,
         theme: mapTheme.get(res.data.map_theme).key,
@@ -239,6 +240,7 @@ export default {
   head() {
     return {
       title: this.title,
+      description: this.description || 'Map Visualization Tool',
     }
   },
 }

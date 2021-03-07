@@ -14,7 +14,19 @@
     </template>
     <!-- URL生成前 -->
     <template v-else>
-      <el-input v-model="title" placeholder="タイトルを入力してください" maxlength="30" show-word-limit></el-input>
+      <el-form>
+        <el-form-item label="title" :rules="[{ required: true }]">
+          <el-input v-model="title" placeholder="タイトルを入力してください" maxlength="30" show-word-limit></el-input>
+        </el-form-item>
+        <el-form-item label="description">
+          <el-input
+            v-model="description"
+            placeholder="説明を入力してください"
+            maxlength="120"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" :disabled="isDisabledCreate" :loading="loading" @click="onCreateMapUrl"
           >作成する</el-button
@@ -56,6 +68,7 @@ export default {
   data() {
     return {
       title: '',
+      description: '',
       url: '',
       loading: false,
     }
@@ -91,6 +104,7 @@ export default {
       const level = this.cascader[1]
       const api = new GeoApi('/view_map_states', {
         title: this.title,
+        description: this.description,
         zoom: this.mapState.zoom,
         latitude: this.mapState.center.lat(),
         longitude: this.mapState.center.lng(),
