@@ -4,15 +4,13 @@
 
 ## About
 
-緯度経度を地図上に可視化・分析するためのツールです。  
+緯度経度可視化ツール。
 
-https://tool.geo.qazsato.com  
-
-下記4種類の表示が可能です。  
+下記4種類の表示が可能。
 
 1. 住所 (都道府県・市区町村など)
 2. 地域メッシュ
 3. ヒートマップ
 4. マーカークラスタリング
 
-![Geo Tool](https://user-images.githubusercontent.com/5030713/93666755-b0303880-fabb-11ea-9788-f1055cdc2b65.png)
+![Geo Tool](https://user-images.githubusercontent.com/5030713/110241205-e478b200-7f92-11eb-9bf5-dfab40932b9d.png)
