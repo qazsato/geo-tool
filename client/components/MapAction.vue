@@ -1,16 +1,10 @@
 <template>
   <div class="map-action">
     <Cascader :cascader="cascader" class="cascader" @change="onChangeCascader" />
-    <el-button v-if="visibleShareButton" class="share-button" icon="el-icon-share" @click="onClickShare"
-      >地図を共有する</el-button
-    >
-    <el-button
-      v-if="visibleTableButton && data.length > 0"
-      class="table-button"
-      icon="el-icon-data-analysis"
-      @click="onClickTable"
-      >表・グラフで確認する</el-button
-    >
+    <template v-if="data.length > 0">
+      <el-button class="slider-button" icon="el-icon-s-operation" @click="onClickSlider">件数で絞り込む</el-button>
+      <el-button class="table-button" icon="el-icon-pie-chart" @click="onClickTable">表・グラフで確認する</el-button>
+    </template>
   </div>
 </template>
 
@@ -26,16 +20,6 @@ export default {
       required: true,
       type: Array,
     },
-
-    visibleShareButton: {
-      required: false,
-      type: Boolean,
-    },
-
-    visibleTableButton: {
-      required: false,
-      type: Boolean,
-    },
   },
 
   methods: {
@@ -43,8 +27,8 @@ export default {
       this.$emit('changeCascader', value)
     },
 
-    onClickShare() {
-      this.$emit('clickShare')
+    onClickSlider() {
+      this.$emit('clickSlider')
     },
 
     onClickTable() {
@@ -60,7 +44,7 @@ export default {
   flex-wrap: wrap;
 
   .cascader,
-  .share-button,
+  .slider-button,
   .table-button {
     margin: 5px;
   }
@@ -73,7 +57,7 @@ export default {
     }
   }
 
-  .share-button,
+  .slider-button,
   .table-button {
     /deep/ span {
       @include xs() {

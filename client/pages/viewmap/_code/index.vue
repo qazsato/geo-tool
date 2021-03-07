@@ -9,8 +9,8 @@
       :cascader="cascader"
       :data="tableData"
       class="map-acition"
-      visible-table-button
       @changeCascader="onChangeCascader"
+      @clickSlider="onClickSlider"
       @clickTable="onClickTable"
     />
 
@@ -30,6 +30,15 @@
     />
 
     <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
+
+    <SliderDialog
+      :visible="sliderDialogVisible"
+      :min="minCount"
+      :max="maxCount"
+      :value="countRange"
+      @close="closeDialog"
+      @apply="applyCountRange"
+    />
   </Page>
 </template>
 
@@ -79,7 +88,11 @@ export default {
       markers: [],
       heatmap: null,
       tableData: [],
+      sliderDialogVisible: false,
       drawerVisible: false,
+      minCount: null,
+      maxCount: null,
+      countRange: null,
     }
   },
 
@@ -114,12 +127,26 @@ export default {
   methods: {
     ...mapActions('map', { loadMap: 'load' }),
 
+    onClickSlider() {
+      this.sliderDialogVisible = true
+    },
+
     onClickTable() {
       this.drawerVisible = true
     },
 
+    closeDialog() {
+      this.sliderDialogVisible = false
+    },
+
     closeDrawer() {
       this.drawerVisible = false
+    },
+
+    applyCountRange(value) {
+      this.countRange = value
+      this.drawMap()
+      this.sliderDialogVisible = false
     },
 
     async drawMap() {
@@ -128,9 +155,16 @@ export default {
       if (this.isAddress) {
         try {
           const level = Number(this.cascader[1])
-          const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, level)
+          const { counts, geojsons, minCount, maxCount, countRange } = await fetchAddressGeoJSON(
+            this.locations,
+            level,
+            this.countRange
+          )
           this.tableData = counts
           this.geojsons = geojsons
+          this.minCount = minCount
+          this.maxCount = maxCount
+          this.countRange = countRange
         } catch (e) {
           this.$notify.error({
             title: 'Error',
@@ -140,9 +174,16 @@ export default {
       } else if (this.isMesh) {
         try {
           const level = Number(this.cascader[1])
-          const { counts, geojsons } = fetchMeshGeoJSON(this.locations, level)
+          const { counts, geojsons, minCount, maxCount, countRange } = fetchMeshGeoJSON(
+            this.locations,
+            level,
+            this.countRange
+          )
           this.tableData = counts
           this.geojsons = geojsons
+          this.minCount = minCount
+          this.maxCount = maxCount
+          this.countRange = countRange
         } catch (e) {
           this.$notify.error({
             title: 'Error',
@@ -188,6 +229,9 @@ export default {
 
     onChangeCascader(value) {
       this.cascader = value
+      this.minCount = null
+      this.maxCount = null
+      this.countRange = null
       this.drawMap()
     },
   },

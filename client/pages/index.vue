@@ -2,6 +2,9 @@
   <Page v-loading="loading">
     <template v-slot:header>
       <Header :title="title">
+        <el-button v-if="locations.length > 0" class="share-button" icon="el-icon-share" @click="onClickShare"
+          >地図を共有する</el-button
+        >
         <el-button class="import-button" icon="el-icon-place" @click="onClickImport">データ読み込み</el-button>
       </Header>
     </template>
@@ -11,10 +14,8 @@
       :cascader="cascader"
       :data="tableData"
       class="map-acition"
-      visible-share-button
-      visible-table-button
       @changeCascader="onChangeCascader"
-      @clickShare="onClickShare"
+      @clickSlider="onClickSlider"
       @clickTable="onClickTable"
     />
 
@@ -34,6 +35,15 @@
     />
 
     <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
+
+    <SliderDialog
+      :visible="sliderDialogVisible"
+      :min="minCount"
+      :max="maxCount"
+      :value="countRange"
+      @close="closeDialog"
+      @apply="applyCountRange"
+    />
 
     <ShareDialog
       :map-state="mapState"
@@ -74,8 +84,12 @@ export default {
       tableData: [],
       shareDialogVisible: false,
       importDialogVisible: false,
+      sliderDialogVisible: false,
       drawerVisible: false,
       isAutoAdjust: false,
+      minCount: null,
+      maxCount: null,
+      countRange: null,
     }
   },
 
@@ -123,6 +137,10 @@ export default {
       this.shareDialogVisible = true
     },
 
+    onClickSlider() {
+      this.sliderDialogVisible = true
+    },
+
     onClickTable() {
       this.drawerVisible = true
     },
@@ -130,10 +148,17 @@ export default {
     closeDialog() {
       this.shareDialogVisible = false
       this.importDialogVisible = false
+      this.sliderDialogVisible = false
     },
 
     closeDrawer() {
       this.drawerVisible = false
+    },
+
+    applyCountRange(value) {
+      this.countRange = value
+      this.drawMap()
+      this.sliderDialogVisible = false
     },
 
     onImport(locations) {
@@ -143,20 +168,22 @@ export default {
       setTimeout(() => (this.isAutoAdjust = false))
     },
 
-    onChangeCascader(value) {
-      this.cascader = value
-      this.drawMap()
-    },
-
     async drawMap() {
       this.loading = true
       this.clearData()
       if (this.isAddress) {
         try {
           const level = Number(this.cascader[1])
-          const { counts, geojsons } = await fetchAddressGeoJSON(this.locations, level)
+          const { counts, geojsons, minCount, maxCount, countRange } = await fetchAddressGeoJSON(
+            this.locations,
+            level,
+            this.countRange
+          )
           this.tableData = counts
           this.geojsons = geojsons
+          this.minCount = minCount
+          this.maxCount = maxCount
+          this.countRange = countRange
         } catch (e) {
           this.$notify.error({
             title: 'Error',
@@ -166,9 +193,16 @@ export default {
       } else if (this.isMesh) {
         try {
           const level = Number(this.cascader[1])
-          const { counts, geojsons } = fetchMeshGeoJSON(this.locations, level)
+          const { counts, geojsons, minCount, maxCount, countRange } = fetchMeshGeoJSON(
+            this.locations,
+            level,
+            this.countRange
+          )
           this.tableData = counts
           this.geojsons = geojsons
+          this.minCount = minCount
+          this.maxCount = maxCount
+          this.countRange = countRange
         } catch (e) {
           this.$notify.error({
             title: 'Error',
@@ -215,6 +249,14 @@ export default {
         this.infowindows = [infowindow]
       }
     },
+
+    onChangeCascader(value) {
+      this.cascader = value
+      this.minCount = null
+      this.maxCount = null
+      this.countRange = null
+      this.drawMap()
+    },
   },
 
   head() {
@@ -234,6 +276,7 @@ export default {
   z-index: 10;
 }
 
+.share-button,
 .import-button {
   /deep/ span {
     @include xs() {
