@@ -2,12 +2,10 @@
   <div class="map-container" :style="{ width: width, height: height }">
     <div ref="map" class="map"></div>
     <div class="controller">
-      <el-color-picker
-        v-if="isVisibleColorPicker"
-        v-model="color"
-        size="medium"
-        :predefine="predefineColors"
-      ></el-color-picker>
+      <div v-if="isVisiblePolygonController" class="polygon-controller">
+        <el-color-picker v-model="color" size="medium" :predefine="predefineColors"></el-color-picker>
+        <el-switch v-model="isVisiblePolygon" :active-color="color"></el-switch>
+      </div>
       <el-select v-model="theme" size="medium">
         <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
           <img :src="require(`~/assets/images/map/themes/${t}.png`)" />
@@ -134,6 +132,7 @@ export default {
       predefineColors: ['#409eff', '#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
       theme: this.getDefaultTheme(),
       themes: mapTheme.enums.map((e) => e.key),
+      isVisiblePolygon: true,
       localMarkers: [],
       localInfowindows: [],
       localHeatmap: null,
@@ -141,7 +140,7 @@ export default {
   },
 
   computed: {
-    isVisibleColorPicker() {
+    isVisiblePolygonController() {
       return this.geojsons.length > 0
     },
   },
@@ -157,6 +156,10 @@ export default {
       this.map.setMapTypeId(val)
       ls(LS_THEME_KEY, val)
       this.$emit('stateChanged', this.getMapState())
+    },
+
+    isVisiblePolygon(val) {
+      this.drawData()
     },
 
     markers(val) {
@@ -301,7 +304,7 @@ export default {
         const fillColor = this.color
         const fillOpacity = feature.getProperty('fillOpacity')
         const zIndex = feature.getProperty('zIndex')
-        const visible = feature.getProperty('visible')
+        const visible = this.isVisiblePolygon
         return {
           strokeWeight,
           strokeColor,
@@ -358,6 +361,16 @@ export default {
   left: 5px;
   bottom: 30px;
   width: 110px;
+
+  .polygon-controller {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+
+    .el-switch {
+      margin-left: 10px;
+    }
+  }
 
   /deep/ .el-input {
     @include xs() {
