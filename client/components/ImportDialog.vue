@@ -90,7 +90,7 @@ export default {
       if (this.locations.length > this.MAX_COUNT) {
         this.$notify.error({
           title: 'Error',
-          message: `解析できるデータは最大${this.MAX_COUNT}件です`,
+          message: `解析できるデータは最大${this.MAX_COUNT.toLocaleString()}件です`,
         })
         return
       }
