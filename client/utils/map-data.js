@@ -5,10 +5,9 @@ import GeoApi from '@/requests/geo-api'
 import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
 
 export const fetchAddressGeoJSON = async (locations, level) => {
-  const LIMIT_LEVEL = 2
   const LIMIT_COUNT = 10000
-  if (level > LIMIT_LEVEL && locations.length > LIMIT_COUNT) {
-    throw new Error(`大字・町以下は、データ数を${LIMIT_COUNT.toLocaleString()}件以下にしてください`)
+  if (locations.length > LIMIT_COUNT) {
+    throw new Error(`住所はデータ数を${LIMIT_COUNT.toLocaleString()}件以下にしてください`)
   }
   const geojsons = []
   const data = await analayzeAddressContain(locations, level).catch((e) => {
@@ -77,8 +76,8 @@ export const fetchMarkers = (google, locations) => {
 }
 
 function analayzeAddressContain(allLocations, level) {
-  const LIMIT_PER_RIQUEST = 10000 // APIの最大指定数
-  const chunkLocations = _.chunk(allLocations, LIMIT_PER_RIQUEST)
+  const LIMIT_PER_REQUEST = 10000 // APIの最大指定数
+  const chunkLocations = _.chunk(allLocations, LIMIT_PER_REQUEST)
   return new Promise((resolve, reject) => {
     const promises = chunkLocations.map((locations) => {
       const api = new GeoApi('/analytics/addresses/contains', {
@@ -116,18 +115,18 @@ function analayzeAddressContain(allLocations, level) {
 }
 
 function fetchAddressShape(allCodes) {
-  const LIMIT_PER_RIQUEST = 100 // APIの最大指定数
+  const LIMIT_PER_REQUEST = 100 // APIの最大指定数
   const shape = {
     features: [],
     type: 'FeatureCollection',
   }
   // APIの最大コード指定数を超えるとエラーとなるため分割する
-  const codes = _.chunk(allCodes, LIMIT_PER_RIQUEST)
+  const codes = _.chunk(allCodes, LIMIT_PER_REQUEST)
   return new Promise((resolve, reject) => {
     const promises = codes.map((code) => {
       const api = new GeoApi('/addresses/shape', {
         code: code.toString(),
-        limit: LIMIT_PER_RIQUEST,
+        limit: LIMIT_PER_REQUEST,
       })
       return api.get()
     })
