@@ -5,28 +5,28 @@ import GeoApi from '@/requests/geo-api'
 import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
 
 export const fetchAddressGeoJSON = async (locations, level) => {
+  const LIMIT_LEVEL = 2
+  const LIMIT_COUNT = 10000
+  if (level > LIMIT_LEVEL && locations.length > LIMIT_COUNT) {
+    throw new Error(`大字・町以下は、データ数を${LIMIT_COUNT.toLocaleString()}件以下にしてください`)
+  }
   const geojsons = []
-  const api = new GeoApi('/analytics/addresses/contains', {
-    locations,
-    level,
-  })
-  const res = await api.post().catch((e) => {
+  const data = await analayzeAddressContain(locations, level).catch((e) => {
     throw e
   })
-  const data = res.data.sort((a, b) => b.count - a.count) // 件数多い順に並び替え
   const counts = data.map((d) => {
     return {
       key: d.address_name,
       count: d.count,
     }
   })
-  const max = Math.max(...res.data.map((d) => d.count))
-  const codes = res.data.map((d) => d.address_code)
+  const max = Math.max(...data.map((d) => d.count))
+  const codes = data.map((d) => d.address_code)
   const shape = await fetchAddressShape(codes).catch((e) => {
     throw e
   })
   shape.features.forEach((feature) => {
-    const d = res.data.filter((d) => d.address_code === feature.properties.code)[0]
+    const d = data.filter((d) => d.address_code === feature.properties.code)[0]
     const opacity = (d.count / max) * 0.9
     feature.properties.name = d.address_name
     feature.properties.count = d.count
@@ -76,19 +76,58 @@ export const fetchMarkers = (google, locations) => {
   return markers
 }
 
+function analayzeAddressContain(allLocations, level) {
+  const LIMIT_PER_RIQUEST = 10000 // APIの最大指定数
+  const chunkLocations = _.chunk(allLocations, LIMIT_PER_RIQUEST)
+  return new Promise((resolve, reject) => {
+    const promises = chunkLocations.map((locations) => {
+      const api = new GeoApi('/analytics/addresses/contains', {
+        locations,
+        level,
+      })
+      return api.post()
+    })
+    axios
+      .all(promises)
+      .then(
+        axios.spread((...results) => {
+          const countByAddresses = []
+          results.forEach((r) =>
+            r.data.forEach((d) => {
+              const hasAddress = countByAddresses.filter((a) => a.address_code === d.address_code).length > 0
+              if (hasAddress) {
+                countByAddresses.forEach((a) => {
+                  if (a.address_code === d.address_code) {
+                    a.count += d.count
+                  }
+                })
+              } else {
+                countByAddresses.push(d)
+              }
+            })
+          )
+          resolve(countByAddresses.sort((a, b) => b.count - a.count)) // 件数多い順に並び替え
+        })
+      )
+      .catch((e) => {
+        reject(e)
+      })
+  })
+}
+
 function fetchAddressShape(allCodes) {
-  const MAX_CODE_COUNT = 100 // APIのコードの最大指定数
+  const LIMIT_PER_RIQUEST = 100 // APIの最大指定数
   const shape = {
     features: [],
     type: 'FeatureCollection',
   }
   // APIの最大コード指定数を超えるとエラーとなるため分割する
-  const codes = _.chunk(allCodes, MAX_CODE_COUNT)
+  const codes = _.chunk(allCodes, LIMIT_PER_RIQUEST)
   return new Promise((resolve, reject) => {
     const promises = codes.map((code) => {
       const api = new GeoApi('/addresses/shape', {
         code: code.toString(),
-        limit: MAX_CODE_COUNT,
+        limit: LIMIT_PER_RIQUEST,
       })
       return api.get()
     })

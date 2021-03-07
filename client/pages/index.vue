@@ -160,7 +160,7 @@ export default {
         } catch (e) {
           this.$notify.error({
             title: 'Error',
-            message: e.response.data.error.message,
+            message: e.message || e.response.data.error.message,
           })
         }
       } else if (this.isMesh) {
