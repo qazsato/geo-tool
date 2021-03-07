@@ -4,7 +4,7 @@
     <div class="controller">
       <div v-if="isVisiblePolygonController" class="polygon-controller">
         <el-color-picker v-model="color" size="medium" :predefine="predefineColors"></el-color-picker>
-        <el-switch v-model="isVisiblePolygon" :active-color="color"></el-switch>
+        <el-switch v-if="visibleSwitch" v-model="isVisiblePolygon" :active-color="color"></el-switch>
       </div>
       <el-select v-model="theme" size="medium">
         <el-option v-for="(t, i) in themes" :key="i" :label="t" :value="t" class="theme-option">
@@ -136,6 +136,7 @@ export default {
       localMarkers: [],
       localInfowindows: [],
       localHeatmap: null,
+      visibleSwitch: true,
     }
   },
 
@@ -147,6 +148,9 @@ export default {
 
   watch: {
     color(val) {
+      // colorの値が更新されても色が反映されないため、v-ifを使った再レンダリングをおこなう
+      this.visibleSwitch = false
+      this.$nextTick(() => (this.visibleSwitch = true))
       this.drawData()
       ls(LS_COLOR_KEY, val)
       this.$emit('stateChanged', this.getMapState())
