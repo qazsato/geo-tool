@@ -1,6 +1,10 @@
 <template>
   <el-dialog title="件数で絞り込む" :visible.sync="visible" :before-close="onClose" custom-class="slider-dialog">
-    <el-slider v-model="innerValue" range :min="min" :max="max"></el-slider>
+    <div class="slider-area">
+      <div>{{ min }}</div>
+      <el-slider v-model="innerValue" range :min="min" :max="max"></el-slider>
+      <div>{{ max }}</div>
+    </div>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="onApply">適用する</el-button>
       <el-button @click="onClose">閉じる</el-button>
@@ -58,6 +62,18 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.slider-area {
+  display: flex;
+  align-items: center;
+
+  .el-slider {
+    flex: 1;
+    margin: 0 16px;
+  }
+}
+</style>
 
 <style lang="scss">
 .slider-dialog {
