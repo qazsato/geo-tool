@@ -9,6 +9,7 @@
       </el-input>
       <p class="note">※ URLの有効期限は作成から30日間です</p>
       <span slot="footer" class="dialog-footer">
+        <el-button @click="onBack">戻る</el-button>
         <el-button @click="onClose">閉じる</el-button>
       </span>
     </template>
@@ -87,10 +88,11 @@ export default {
   },
 
   methods: {
-    onClose() {
-      this.title = ''
-      this.description = ''
+    onBack() {
       this.url = ''
+    },
+
+    onClose() {
       this.$emit('close')
     },
 
