@@ -25,6 +25,7 @@ export const fetchAddressGeoJSON = async (locations, level, countRange) => {
   const counts = data.map((d) => {
     return {
       key: d.address_name,
+      code: d.address_code,
       count: d.count,
     }
   })
@@ -57,7 +58,7 @@ export const fetchMeshGeoJSON = (locations, level, countRange) => {
     countRange = [minCount, maxCount]
   }
   const counts = results.map((c, i) => {
-    return { key: c.code, count: c.count }
+    return { key: c.code, code: c.code, count: c.count }
   })
   results.forEach((c) => {
     const opacity = (c.count / maxCount) * 0.9

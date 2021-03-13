@@ -99,6 +99,14 @@ export default {
       default: null,
     },
 
+    focusLocations: {
+      required: false,
+      type: Array,
+      default() {
+        return []
+      },
+    },
+
     enableMarkerCluster: {
       required: false,
       type: Boolean,
@@ -241,6 +249,12 @@ export default {
         if (locations.length > 0) {
           adjustViewPort(this.google, this.map, locations)
         }
+      }
+    },
+
+    focusLocations(val) {
+      if (val.length > 0) {
+        adjustViewPort(this.google, this.map, val)
       }
     },
   },

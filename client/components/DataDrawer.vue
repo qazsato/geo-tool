@@ -9,7 +9,11 @@
     <el-tabs v-model="activeTab" :stretch="true">
       <el-tab-pane label="表" name="table">
         <el-table :data="data" :default-sort="{ prop: 'count', order: 'descending' }">
-          <el-table-column prop="key" label="ポリゴン" sortable></el-table-column>
+          <el-table-column prop="key" label="ポリゴン" sortable>
+            <template slot-scope="scope">
+              <el-button type="text" @click="clickRow(scope.row.code)">{{ scope.row.key }}</el-button>
+            </template>
+          </el-table-column>
           <el-table-column prop="count" label="件数" width="100" sortable></el-table-column>
         </el-table>
       </el-tab-pane>
@@ -62,6 +66,10 @@ export default {
   methods: {
     onBeforeClose() {
       this.$emit('close')
+    },
+
+    clickRow(code) {
+      this.$emit('clickRow', code)
     },
 
     createChart() {

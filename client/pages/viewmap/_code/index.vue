@@ -23,13 +23,20 @@
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
+      :focus-locations="focusLocations"
       enable-marker-cluster
       @mouseoutData="onMouseoutData"
       @mousemoveData="onMousemoveData"
       @mouseoverData="onMouseoverData"
     />
 
-    <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
+    <DataDrawer
+      :title="drawerTitle"
+      :visible="drawerVisible"
+      :data="tableData"
+      @close="closeDrawer"
+      @clickRow="clickRow"
+    />
 
     <SliderDialog
       :visible="sliderDialogVisible"
@@ -54,6 +61,7 @@ import {
   createMeshCountInfowindow,
 } from '@/utils/map-data'
 import { mapTheme, analysisType } from '@/constants/view-map-state'
+import { toLocations } from '@/utils/geojson'
 
 export default {
   async asyncData({ params, error }) {
@@ -92,6 +100,7 @@ export default {
       geojsons: [],
       markers: [],
       heatmap: null,
+      focusLocations: [],
       tableData: [],
       sliderDialogVisible: false,
       drawerVisible: false,
@@ -141,6 +150,17 @@ export default {
 
     closeDialog() {
       this.sliderDialogVisible = false
+    },
+
+    clickRow(code) {
+      let features = this.geojsons
+      // 住所
+      if (this.geojsons.length === 1 && this.geojsons[0].type === 'FeatureCollection') {
+        features = this.geojsons[0].features
+      }
+      const geojson = features.find((f) => f.properties.code === code)
+      this.focusLocations = toLocations(geojson)
+      this.drawerVisible = false
     },
 
     closeDrawer() {

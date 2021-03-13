@@ -24,6 +24,7 @@
       :geojsons="geojsons"
       :markers="markers"
       :heatmap="heatmap"
+      :focus-locations="focusLocations"
       :auto-adjust-markers="isAutoAdjust"
       :auto-adjust-geojsons="isAutoAdjust"
       :auto-adjust-heatmap="isAutoAdjust"
@@ -34,7 +35,13 @@
       @mouseoverData="onMouseoverData"
     />
 
-    <DataDrawer :title="drawerTitle" :visible="drawerVisible" :data="tableData" @close="closeDrawer" />
+    <DataDrawer
+      :title="drawerTitle"
+      :visible="drawerVisible"
+      :data="tableData"
+      @close="closeDrawer"
+      @clickRow="clickRow"
+    />
 
     <SliderDialog
       :visible="sliderDialogVisible"
@@ -69,6 +76,7 @@ import {
   createMeshCountInfowindow,
 } from '@/utils/map-data'
 import { analysisType } from '@/constants/view-map-state'
+import { toLocations } from '@/utils/geojson'
 
 export default {
   data() {
@@ -82,6 +90,7 @@ export default {
       geojsons: [],
       markers: [],
       heatmap: null,
+      focusLocations: [],
       tableData: [],
       shareDialogVisible: false,
       importDialogVisible: false,
@@ -153,6 +162,17 @@ export default {
     },
 
     closeDrawer() {
+      this.drawerVisible = false
+    },
+
+    clickRow(code) {
+      let features = this.geojsons
+      // 住所
+      if (this.geojsons.length === 1 && this.geojsons[0].type === 'FeatureCollection') {
+        features = this.geojsons[0].features
+      }
+      const geojson = features.find((f) => f.properties.code === code)
+      this.focusLocations = toLocations(geojson)
       this.drawerVisible = false
     },
 
