@@ -11,7 +11,7 @@
         <el-table :data="data" :default-sort="{ prop: 'count', order: 'descending' }">
           <el-table-column prop="key" label="ポリゴン" sortable>
             <template slot-scope="scope">
-              <el-button type="text" @click="clickRow(scope.row.code)">{{ scope.row.key }}</el-button>
+              <el-link type="primary" :underline="false" @click="clickRow(scope.row.code)">{{ scope.row.key }}</el-link>
             </template>
           </el-table-column>
           <el-table-column prop="count" label="件数" width="100" sortable></el-table-column>
