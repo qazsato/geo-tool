@@ -33,6 +33,7 @@
       @mouseoutData="onMouseoutData"
       @mousemoveData="onMousemoveData"
       @mouseoverData="onMouseoverData"
+      @contextmenu="onContextmenu"
     />
 
     <DataDrawer
@@ -269,6 +270,18 @@ export default {
         const infowindow = createMeshCountInfowindow(this.google, this.geojsons, event)
         this.infowindows = [infowindow]
       }
+    },
+
+    onContextmenu(event) {
+      this.$confirm('選択した地点をストリートビューで確認しますか？', 'ストリートビュー', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+      }).then(() => {
+        const lat = event.latLng.lat()
+        const lng = event.latLng.lng()
+        const url = `https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${lat},${lng}`
+        window.open(url)
+      })
     },
 
     onChangeCascader(value) {

@@ -308,6 +308,7 @@ export default {
 
     bindMap() {
       this.map.addListener('click', (e) => this.$emit('click', e))
+      this.map.addListener('contextmenu', (e) => this.$emit('contextmenu', e))
       this.map.addListener('bounds_changed', (e) => this.$emit('stateChanged', this.getMapState()))
       this.map.data.addListener('click', (e) => this.$emit('clickData', e))
       this.map.data.addListener('mouseout', (e) => this.$emit('mouseoutData', e))
