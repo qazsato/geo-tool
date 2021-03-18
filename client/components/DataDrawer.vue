@@ -8,14 +8,20 @@
   >
     <el-tabs v-model="activeTab" :stretch="true">
       <el-tab-pane label="表" name="table">
-        <el-table :data="data" :default-sort="{ prop: 'count', order: 'descending' }">
-          <el-table-column prop="key" label="ポリゴン" sortable>
-            <template slot-scope="scope">
-              <el-link type="primary" :underline="false" @click="clickRow(scope.row.code)">{{ scope.row.key }}</el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="count" label="件数" width="100" sortable></el-table-column>
-        </el-table>
+        <div class="list-container">
+          <div class="list-title">
+            <div class="polygon">ポリゴン</div>
+            <div class="spacer"></div>
+            <div class="count">件数</div>
+          </div>
+          <RecycleScroller v-slot="{ item }" :items="data" :item-size="50" key-field="code" page-mode>
+            <div class="list-item">
+              <el-link type="primary" :underline="false" @click="clickRow(item.code)">{{ item.key }}</el-link>
+              <div class="spacer"></div>
+              <span class="count">{{ item.count }}</span>
+            </div>
+          </RecycleScroller>
+        </div>
       </el-tab-pane>
       <el-tab-pane label="グラフ" name="graph">
         <canvas ref="chart" width="100%" height="100%"></canvas>
@@ -133,6 +139,52 @@ export default {
 
   .el-drawer__body {
     overflow: auto;
+  }
+}
+
+.el-tabs {
+  height: 100%;
+
+  .el-tabs__header {
+    margin-bottom: 0;
+  }
+
+  .el-tabs__content {
+    overflow: auto;
+    height: calc(100% - 40px);
+  }
+}
+
+.list-container {
+  font-size: 14px;
+  color: #606266;
+
+  .list-title {
+    padding: 15px 15px 10px;
+    display: flex;
+    font-weight: bold;
+    color: #909399;
+    border-bottom: 1px solid #ebeef5;
+
+    .spacer {
+      flex: 1;
+    }
+  }
+
+  .list-item {
+    padding: 10px 15px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ebeef5;
+
+    .spacer {
+      flex: 1;
+    }
+
+    .count {
+      min-width: 20px;
+    }
   }
 }
 </style>

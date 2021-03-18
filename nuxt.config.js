@@ -27,7 +27,7 @@ module.exports = {
     scss: ['@/assets/styles/core.scss'],
   },
 
-  plugins: ['@/plugins/element-ui'],
+  plugins: ['@/plugins/element-ui', '@/plugins/vue-virtual-scroller'],
 
   components: true,
 

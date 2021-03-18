@@ -48,7 +48,7 @@ export default {
 
   data() {
     return {
-      MAX_COUNT: 30000,
+      MAX_COUNT: 10000,
       textarea: '',
       placeholder: 'latitude,longitude',
     }

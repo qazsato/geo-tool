@@ -39,7 +39,8 @@
     "nuxt": "2.13.0",
     "nuxt-start": "2.14.3",
     "serverless-apigw-binary": "0.4.4",
-    "serverless-http": "2.5.0"
+    "serverless-http": "2.5.0",
+    "vue-virtual-scroller": "1.0.10"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "3.0.0",
