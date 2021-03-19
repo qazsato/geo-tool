@@ -14,7 +14,7 @@
             <div class="spacer"></div>
             <div class="count">件数</div>
           </div>
-          <RecycleScroller v-slot="{ item }" :items="data" :item-size="50" key-field="code" page-mode>
+          <RecycleScroller v-slot="{ item }" :items="data" :item-size="50" key-field="code">
             <div class="list-item">
               <el-link type="primary" :underline="false" @click="clickRow(item.code)">{{ item.key }}</el-link>
               <div class="spacer"></div>
