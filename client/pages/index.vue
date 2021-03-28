@@ -78,6 +78,7 @@ import {
 } from '@/utils/map-data'
 import { analysisType } from '@/constants/view-map-state'
 import { toLocations } from '@/utils/geojson'
+import { POLYGON_LIMIT } from '@/constants/address'
 
 export default {
   data() {
@@ -173,8 +174,10 @@ export default {
         features = this.geojsons[0].features
       }
       const geojson = features.find((f) => f.properties.code === code)
-      this.focusLocations = toLocations(geojson)
-      this.drawerVisible = false
+      if (geojson) {
+        this.focusLocations = toLocations(geojson)
+        this.drawerVisible = false
+      }
     },
 
     applyCountRange(value) {
@@ -201,6 +204,13 @@ export default {
             level,
             this.countRange
           )
+          if (counts.length > POLYGON_LIMIT) {
+            this.$notify({
+              title: 'Info',
+              message: `住所数が${POLYGON_LIMIT.toLocaleString()}件を超えているため地図の描画はされません`,
+              type: 'info',
+            })
+          }
           this.tableData = counts
           this.geojsons = geojsons
           this.minCount = minCount

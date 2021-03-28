@@ -3,11 +3,11 @@ import axios from 'axios'
 import japanmesh from 'japanmesh'
 import GeoApi from '@/requests/geo-api'
 import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
+import { ANALYSYS_LIMIT, POLYGON_LIMIT } from '@/constants/address'
 
 export const fetchAddressGeoJSON = async (locations, level, countRange) => {
-  const LIMIT_COUNT = 10000
-  if (locations.length > LIMIT_COUNT) {
-    throw new Error(`住所はデータ数を${LIMIT_COUNT.toLocaleString()}件以下にしてください`)
+  if (locations.length > ANALYSYS_LIMIT) {
+    throw new Error(`住所はデータ数を${ANALYSYS_LIMIT.toLocaleString()}件以下にしてください`)
   }
   const geojsons = []
   let data = await analayzeAddressContain(locations, level).catch((e) => {
@@ -30,18 +30,20 @@ export const fetchAddressGeoJSON = async (locations, level, countRange) => {
     }
   })
   const codes = data.map((d) => d.address_code)
-  const shape = await fetchAddressShape(codes).catch((e) => {
-    throw e
-  })
-  shape.features.forEach((feature) => {
-    const d = data.filter((d) => d.address_code === feature.properties.code)[0]
-    const opacity = (d.count / maxCount) * 0.9
-    feature.properties.name = d.address_name
-    feature.properties.count = d.count
-    feature.properties.strokeWeight = 1
-    feature.properties.fillOpacity = opacity
-  })
-  geojsons.push(shape)
+  if (codes.length <= POLYGON_LIMIT) {
+    const shape = await fetchAddressShape(codes).catch((e) => {
+      throw e
+    })
+    shape.features.forEach((feature) => {
+      const d = data.filter((d) => d.address_code === feature.properties.code)[0]
+      const opacity = (d.count / maxCount) * 0.9
+      feature.properties.name = d.address_name
+      feature.properties.count = d.count
+      feature.properties.strokeWeight = 1
+      feature.properties.fillOpacity = opacity
+    })
+    geojsons.push(shape)
+  }
   return { counts, geojsons, minCount, maxCount, countRange }
 }
 
