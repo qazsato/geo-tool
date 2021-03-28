@@ -3,11 +3,16 @@ import axios from 'axios'
 import japanmesh from 'japanmesh'
 import GeoApi from '@/requests/geo-api'
 import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
-import { ANALYSYS_LIMIT, POLYGON_LIMIT } from '@/constants/address'
+import {
+  ANALYTICS_LIMIT,
+  ANALYTICS_LIMIT_PER_REQUEST,
+  POLYGON_LIMIT,
+  POLYGON_LIMIT_PER_REQUEST,
+} from '@/constants/address'
 
 export const fetchAddressGeoJSON = async (locations, level, countRange) => {
-  if (locations.length > ANALYSYS_LIMIT) {
-    throw new Error(`住所はデータ数を${ANALYSYS_LIMIT.toLocaleString()}件以下にしてください`)
+  if (locations.length > ANALYTICS_LIMIT) {
+    throw new Error(`住所はデータ数を${ANALYTICS_LIMIT.toLocaleString()}件以下にしてください`)
   }
   const geojsons = []
   let data = await analayzeAddressContain(locations, level).catch((e) => {
@@ -95,8 +100,7 @@ export const fetchMarkers = (google, locations) => {
 }
 
 function analayzeAddressContain(allLocations, level) {
-  const LIMIT_PER_REQUEST = 10000 // APIの最大指定数
-  const chunkLocations = _.chunk(allLocations, LIMIT_PER_REQUEST)
+  const chunkLocations = _.chunk(allLocations, ANALYTICS_LIMIT_PER_REQUEST)
   return new Promise((resolve, reject) => {
     const promises = chunkLocations.map((locations) => {
       const api = new GeoApi('/analytics/addresses/contains', {
@@ -134,18 +138,17 @@ function analayzeAddressContain(allLocations, level) {
 }
 
 function fetchAddressShape(allCodes) {
-  const LIMIT_PER_REQUEST = 100 // APIの最大指定数
   const shape = {
     features: [],
     type: 'FeatureCollection',
   }
   // APIの最大コード指定数を超えるとエラーとなるため分割する
-  const codes = _.chunk(allCodes, LIMIT_PER_REQUEST)
+  const codes = _.chunk(allCodes, POLYGON_LIMIT_PER_REQUEST)
   return new Promise((resolve, reject) => {
     const promises = codes.map((code) => {
       const api = new GeoApi('/addresses/shape', {
         code: code.toString(),
-        limit: LIMIT_PER_REQUEST,
+        limit: POLYGON_LIMIT_PER_REQUEST,
       })
       return api.get()
     })

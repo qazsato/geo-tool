@@ -191,7 +191,7 @@ export default {
           if (counts.length > POLYGON_LIMIT) {
             this.$notify({
               title: 'Info',
-              message: `住所数が${POLYGON_LIMIT.toLocaleString()}件を超えているため地図の描画はされません`,
+              message: `住所数が ${POLYGON_LIMIT.toLocaleString()} 件を超えているため地図の描画はされません`,
               type: 'info',
             })
           }

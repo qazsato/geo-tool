@@ -37,7 +37,7 @@
 
 <script>
 import japanmesh from 'japanmesh'
-import { ANALYSYS_LIMIT } from '@/constants/address'
+import { ANALYTICS_LIMIT } from '@/constants/address'
 
 export default {
   props: {
@@ -49,7 +49,7 @@ export default {
 
   data() {
     return {
-      MAX_COUNT: ANALYSYS_LIMIT,
+      MAX_COUNT: ANALYTICS_LIMIT,
       textarea: '',
       placeholder: 'latitude,longitude',
     }
