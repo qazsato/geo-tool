@@ -6,6 +6,15 @@
     custom-class="data-drawer"
     direction="ltr"
   >
+    <el-tooltip class="item" effect="dark" content="CSVダウンロード" placement="top">
+      <el-button
+        class="download-button"
+        type="primary"
+        icon="el-icon-download"
+        circle
+        @click="clickDownload"
+      ></el-button>
+    </el-tooltip>
     <el-tabs v-model="activeTab" :stretch="true">
       <el-tab-pane label="表" name="table">
         <div class="list-container">
@@ -78,6 +87,22 @@ export default {
       this.$emit('clickRow', code)
     },
 
+    clickDownload() {
+      // CSVデータ生成
+      const filename = 'geo_result.csv'
+      let content = 'name,count\n'
+      this.data.forEach((d) => (content += `${d.key},${d.count}\n`))
+      const blob = new Blob([content], { type: 'text/csv' })
+      const url = window.URL.createObjectURL(blob)
+
+      // ダウンロード処理
+      const download = document.createElement('a')
+      download.href = window.URL.createObjectURL(blob)
+      download.download = filename
+      download.click()
+      window.URL.revokeObjectURL(url)
+    },
+
     createChart() {
       if (this.chart) {
         this.chart.destroy()
@@ -120,6 +145,13 @@ export default {
 .el-table {
   width: 100%;
 }
+
+.download-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+}
 </style>
 
 <style lang="scss">
@@ -158,6 +190,7 @@ export default {
 .list-container {
   font-size: 14px;
   color: #606266;
+  padding-bottom: 60px;
 
   .list-title {
     padding: 15px 15px 10px;
