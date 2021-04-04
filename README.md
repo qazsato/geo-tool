@@ -14,3 +14,13 @@
 4. マーカークラスタリング
 
 ![Geo Tool](https://user-images.githubusercontent.com/5030713/110241205-e478b200-7f92-11eb-9bf5-dfab40932b9d.png)
+
+## Setup
+
+```bash
+$ docker-compose build --no-cache
+$ docker-compose up -d
+$ docker-compose exec geo_tool /bin/bash -c 'npm run dev:host'
+```
+
+http://localhost:3000 でアクセスして画面が表示されればok

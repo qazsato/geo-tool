@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  geo_tool:
+    build: .
+    tty: true
+    stdin_open: true
+    image: geo-tool
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    container_name: geo-tool
+    ports:
+      - 3000:3000
