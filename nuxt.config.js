@@ -2,7 +2,7 @@
 module.exports = {
   srcDir: 'client/',
 
-  mode: 'universal',
+  ssr: true,
 
   target: 'server',
 
