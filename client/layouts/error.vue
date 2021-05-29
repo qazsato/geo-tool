@@ -21,16 +21,16 @@ export default {
     },
   },
 
-  methods: {
-    backTop() {
-      this.$router.push('/')
-    },
-  },
-
   head() {
     return {
       title: 'Error',
     }
+  },
+
+  methods: {
+    backTop() {
+      this.$router.push('/')
+    },
   },
 }
 </script>

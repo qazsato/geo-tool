@@ -1,6 +1,6 @@
 <template>
   <Page v-loading="loading">
-    <template v-slot:header>
+    <template #header>
       <Header :title="title" :description="description"></Header>
     </template>
 
@@ -108,6 +108,13 @@ export default {
       drawerVisible: false,
       minCount: null,
       maxCount: null,
+    }
+  },
+
+  head() {
+    return {
+      title: this.title,
+      meta: [{ hid: 'description', name: 'description', content: this.description || 'Map Visualization Tool' }],
     }
   },
 
@@ -281,13 +288,6 @@ export default {
       this.countRange = null
       this.drawMap()
     },
-  },
-
-  head() {
-    return {
-      title: this.title,
-      meta: [{ hid: 'description', name: 'description', content: this.description || 'Map Visualization Tool' }],
-    }
   },
 }
 </script>

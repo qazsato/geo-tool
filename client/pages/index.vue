@@ -1,6 +1,6 @@
 <template>
   <Page v-loading="loading">
-    <template v-slot:header>
+    <template #header>
       <Header :title="title">
         <el-button v-if="locations.length > 0" class="share-button" icon="el-icon-share" @click="onClickShare"
           >地図を共有する</el-button
@@ -102,6 +102,13 @@ export default {
       minCount: null,
       maxCount: null,
       countRange: null,
+    }
+  },
+
+  head() {
+    return {
+      title: 'Geo Tool',
+      titleTemplate: '',
     }
   },
 
@@ -301,13 +308,6 @@ export default {
       this.countRange = null
       this.drawMap()
     },
-  },
-
-  head() {
-    return {
-      title: 'Geo Tool',
-      titleTemplate: '',
-    }
   },
 }
 </script>
