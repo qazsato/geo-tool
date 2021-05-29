@@ -75,17 +75,17 @@ export default {
   },
 
   methods: {
-    isValidText() {
-      let isValid = true
+    getInvalidRowNumbers() {
+      const rowNumbers = []
       const rows = this.textarea.split('\n')
-      rows.forEach((row) => {
+      rows.forEach((row, index) => {
         const lat = Number(row.split(',')[0])
         const lng = Number(row.split(',')[1])
         if (!lat || !lng) {
-          isValid = false
+          rowNumbers.push(index + 1)
         }
       })
-      return isValid
+      return rowNumbers
     },
 
     onImport() {
@@ -96,10 +96,11 @@ export default {
         })
         return
       }
-      if (!this.isValidText()) {
+      const invalidRowNumbers = this.getInvalidRowNumbers()
+      if (invalidRowNumbers.length > 0) {
         this.$notify.error({
           title: 'Error',
-          message: '不正なデータが含まれています',
+          message: `${invalidRowNumbers.toString()}行目が不正なデータです`,
         })
         return
       }
