@@ -1,5 +1,11 @@
 <template>
-  <el-dialog title="件数で絞り込む" :visible.sync="visible" :before-close="onClose" custom-class="slider-dialog">
+  <el-dialog
+    title="件数で絞り込む"
+    :visible.sync="visible"
+    :before-close="onClose"
+    custom-class="slider-dialog"
+    :close-on-click-modal="false"
+  >
     <div class="slider-area">
       <div>{{ min }}</div>
       <el-slider v-model="innerValue" range :min="min" :max="max"></el-slider>

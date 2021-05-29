@@ -4,6 +4,7 @@
     :visible.sync="visible"
     :before-close="onBeforeClose"
     custom-class="import-dialog"
+    :close-on-click-modal="false"
   >
     <el-input
       v-model="textarea"

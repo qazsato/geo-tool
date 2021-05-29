@@ -1,5 +1,11 @@
 <template>
-  <el-dialog title="地図を共有する" :visible.sync="visible" :before-close="onClose" custom-class="share-dialog">
+  <el-dialog
+    title="地図を共有する"
+    :visible.sync="visible"
+    :before-close="onClose"
+    custom-class="share-dialog"
+    :close-on-click-modal="false"
+  >
     <!-- URL生成後 -->
     <template v-if="url">
       <el-input v-model="url">
