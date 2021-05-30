@@ -4,6 +4,6 @@
   },
   "geo": {
     "api_url": "https://api.geo.qazsato.com/v1",
-    "access_token": "{YOUR_ACCESS_TOKEN}"
+    "api_key": "{YOUR_API_KEY}"
   }
 }
