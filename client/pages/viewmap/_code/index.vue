@@ -301,7 +301,7 @@ export default {
 }
 
 .table-button {
-  ::v-deep span {
+  /deep/ span {
     @include xs() {
       display: none;
     }
