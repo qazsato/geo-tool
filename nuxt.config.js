@@ -1,4 +1,7 @@
-// eslint-disable-next-line nuxt/no-cjs-in-config
+/* eslint-disable nuxt/no-cjs-in-config */
+const Sass = require('sass')
+const Fiber = require('fibers')
+
 module.exports = {
   srcDir: 'client/',
 
@@ -49,5 +52,13 @@ module.exports = {
 
   build: {
     transpile: [/^element-ui/],
+    loaders: {
+      scss: {
+        implementation: Sass,
+        sassOptions: {
+          fiber: Fiber,
+        },
+      },
+    },
   },
 }
