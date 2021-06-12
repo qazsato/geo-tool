@@ -50,7 +50,7 @@ export default {
   }
 
   .cascader {
-    /deep/ .el-input {
+    ::v-deep .el-input {
       @include xs() {
         font-size: 16px;
       }
@@ -59,7 +59,7 @@ export default {
 
   .slider-button,
   .table-button {
-    /deep/ span {
+    ::v-deep span {
       @include xs() {
         display: none;
       }
