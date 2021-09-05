@@ -27,4 +27,4 @@ http://localhost:3000 でアクセスして画面が表示されればok
 
 ## サンプル
 
-- [東京23区の交差点の交通事故](https://tool.geo.qazsato.com/viewmap/04686590251afc9a64c7403c94e893b8)
+- [東京23区の交差点の交通事故分布](https://tool.geo.qazsato.com/viewmap/04686590251afc9a64c7403c94e893b8)
