@@ -21,7 +21,13 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
-  css: ['element-ui/lib/theme-chalk/index.css'],
+  css: [
+    {
+      src: '@/assets/styles/base.scss',
+      lang: 'scss',
+    },
+    'element-ui/lib/theme-chalk/index.css',
+  ],
 
   styleResources: {
     scss: ['@/assets/styles/core.scss'],
