@@ -104,7 +104,7 @@ function analayzeAddressContain(allLocations, level) {
   return new Promise((resolve, reject) => {
     const promises = chunkLocations.map((locations) => {
       const api = new GeoApi('/analytics/addresses/contains', {
-        locations,
+        locations: locations.map((l) => `${l.lat.toFixed(6)},${l.lng.toFixed(6)}`),
         level,
       })
       return api.post()
