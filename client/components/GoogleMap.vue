@@ -296,6 +296,7 @@ export default {
         clickableIcons: false,
         disableDefaultUI: true,
         zoomControl: true,
+        scaleControl: true,
         mapTypeControlOptions: {
           mapTypeIds: this.themes,
         },
