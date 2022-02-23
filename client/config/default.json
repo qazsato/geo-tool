@@ -1,4 +1,7 @@
 {
+  "geo": {
+    "api_url": "https://api.geo.qazsato.com/v1",
+  },
   "default_location": {
     "lat": 35.689568,
     "lng": 139.691717

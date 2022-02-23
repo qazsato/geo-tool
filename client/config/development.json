@@ -1,9 +1,0 @@
-{
-  "google_maps": {
-    "api_key": "{YOUR_API_KEY}"
-  },
-  "geo": {
-    "api_url": "https://api.geo.qazsato.com/v1",
-    "api_key": "{YOUR_API_KEY}"
-  }
-}
