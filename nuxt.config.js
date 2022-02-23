@@ -6,6 +6,11 @@ module.exports = {
 
   target: 'server',
 
+  env: {
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+    GEO_API_KEY: process.env.GEO_API_KEY,
+  },
+
   head: {
     titleTemplate: '%s - Geo Tool',
     htmlAttrs: { lang: 'ja' },

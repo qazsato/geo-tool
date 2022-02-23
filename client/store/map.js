@@ -1,5 +1,4 @@
 import GoogleMapsApiLoader from 'google-maps-api-loader'
-import config from '@/config'
 
 export const state = () => ({
   google: null,
@@ -13,7 +12,7 @@ export const mutations = {
 
 export const actions = {
   async load(context) {
-    const apiKey = config.google_maps.api_key
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY
     const google = await GoogleMapsApiLoader({
       libraries: ['visualization'],
       apiKey,

@@ -4,7 +4,7 @@ import config from '@/config'
 export default class GeoApi {
   constructor(api, params = {}) {
     this.path = `${config.geo.api_url}${api}`
-    this.params = { ...params, ...{ api_key: config.geo.api_key } }
+    this.params = { ...params, ...{ api_key: process.env.GEO_API_KEY } }
   }
 
   /**
