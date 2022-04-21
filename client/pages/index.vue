@@ -322,7 +322,7 @@ export default {
 
 .share-button,
 .import-button {
-  /deep/ span {
+  ::v-deep span {
     @include xs() {
       display: none;
     }

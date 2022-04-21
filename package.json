@@ -1,7 +1,9 @@
 {
   "name": "geo-tool",
-  "version": "1.0.4",
   "private": true,
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "dev": "nuxt",
     "dev:host": "nuxt --hostname '0.0.0.0'",
@@ -59,8 +61,8 @@
     "husky": "6.0.0",
     "jest": "27.0.2",
     "lint-staged": "11.0.0",
-    "node-sass": "4.14.1",
     "prettier": "2.3.0",
+    "sass": "1.32.13",
     "sass-loader": "10.1.1",
     "serverless": "2.43.1",
     "serverless-domain-manager": "5.1.0",

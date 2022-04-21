@@ -392,7 +392,7 @@ export default {
     }
   }
 
-  /deep/ .el-input {
+  ::v-deep .el-input {
     @include xs() {
       font-size: 16px;
     }
