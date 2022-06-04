@@ -2,7 +2,7 @@ service: geo-tool
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs16.x
   stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
   logRetentionInDays: 30
