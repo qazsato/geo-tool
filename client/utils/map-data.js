@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
-import japanmesh from 'japanmesh'
+import { japanmesh } from 'japanmesh'
 import GeoApi from '@/requests/geo-api'
 import { calcCountGroupByCode, getInfowindowPosition } from '@/utils/mesh'
 import {

@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import japanmesh from 'japanmesh'
+import { japanmesh } from 'japanmesh'
 import { ANALYTICS_LIMIT } from '@/constants/address'
 
 export default {
@@ -131,13 +131,12 @@ export default {
       const LIMIT = 1000
       const TARGET_MESH_CODE = '5339' // 東京近郊
       const locations = []
-      const lv2codes = japanmesh.getCodes(TARGET_MESH_CODE)
       const rand = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
       while (locations.length < LIMIT) {
-        const lv3codes = japanmesh.getCodes(lv2codes[rand(0, lv2codes.length - 1)])
-        const geojson = japanmesh.toGeoJSON(lv3codes[rand(0, lv3codes.length - 1)])
+        const lv1000codes = japanmesh.getCodes(TARGET_MESH_CODE, 1000)
+        const geojson = japanmesh.toGeoJSON(lv1000codes[rand(0, lv1000codes.length - 1)])
         const coordinate = geojson.geometry.coordinates[0][rand(0, 4)]
-        const code = japanmesh.toCode(coordinate[1], coordinate[0], rand(5, 6))
+        const code = japanmesh.toCode(coordinate[1], coordinate[0], 125)
         if (code.indexOf(TARGET_MESH_CODE) === 0) {
           const g = japanmesh.toGeoJSON(code)
           const c = g.geometry.coordinates[0][rand(0, 4)]

@@ -46,28 +46,36 @@ export default {
           label: '地域メッシュ',
           children: [
             {
-              value: meshLevel.level1.value,
-              label: meshLevelName.level1.value,
+              value: meshLevel.level80000.value,
+              label: meshLevelName.level80000.value,
             },
             {
-              value: meshLevel.level2.value,
-              label: meshLevelName.level2.value,
+              value: meshLevel.level10000.value,
+              label: meshLevelName.level10000.value,
             },
             {
-              value: meshLevel.level3.value,
-              label: meshLevelName.level3.value,
+              value: meshLevel.level5000.value,
+              label: meshLevelName.level5000.value,
             },
             {
-              value: meshLevel.level4.value,
-              label: meshLevelName.level4.value,
+              value: meshLevel.level2000.value,
+              label: meshLevelName.level2000.value,
             },
             {
-              value: meshLevel.level5.value,
-              label: meshLevelName.level5.value,
+              value: meshLevel.level1000.value,
+              label: meshLevelName.level1000.value,
             },
             {
-              value: meshLevel.level6.value,
-              label: meshLevelName.level6.value,
+              value: meshLevel.level500.value,
+              label: meshLevelName.level500.value,
+            },
+            {
+              value: meshLevel.level250.value,
+              label: meshLevelName.level250.value,
+            },
+            {
+              value: meshLevel.level125.value,
+              label: meshLevelName.level125.value,
             },
           ],
         },
