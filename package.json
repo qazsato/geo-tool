@@ -36,7 +36,7 @@
     "element-ui": "2.15.2",
     "enum": "3.0.4",
     "google-maps-api-loader": "1.1.1",
-    "japanmesh": "0.1.1",
+    "japanmesh": "1.0.0",
     "local-storage": "2.0.0",
     "lodash": "4.17.21",
     "nuxt": "2.15.6",

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import japanmesh from 'japanmesh'
+import { japanmesh } from 'japanmesh'
 
 export const calcCountGroupByCode = (locations, level) => {
   const count = {}
