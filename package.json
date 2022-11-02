@@ -41,7 +41,6 @@
     "lodash": "4.17.21",
     "nuxt": "2.15.6",
     "nuxt-start": "2.15.6",
-    "serverless-apigw-binary": "0.4.4",
     "serverless-http": "2.7.0",
     "vue-virtual-scroller": "1.0.10"
   },
