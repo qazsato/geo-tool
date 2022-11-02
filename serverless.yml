@@ -6,21 +6,22 @@ provider:
   stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
   logRetentionInDays: 30
-  timeout: 30
+  timeout: 20
   versionFunctions: false
   lambdaHashingVersion: 20201221
   environment:
     NODE_ENV: ${self:provider.stage}
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
 
 functions:
   nuxt:
     handler: server/index.nuxt
     events:
-      - http: ANY /
-      - http: ANY /{proxy+}
+      - httpApi: '*'
 
 plugins:
-  - serverless-apigw-binary
   - serverless-domain-manager
   - serverless-offline
 
@@ -29,11 +30,10 @@ custom:
   environment:
     dev: ${file(./config/development.yml)}
     prod: ${file(./config/production.yml)}
-  apigwBinary:
-    types:
-      - '*/*'
   customDomain:
     domainName: ${self:custom.environment.${self:provider.stage}.domain}
     basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true
+    endpointType: regional
+    apiType: http
