@@ -24,7 +24,6 @@ functions:
       - httpApi: '*'
 
 plugins:
-  - serverless-domain-manager
   - serverless-offline
 
 custom:
@@ -32,10 +31,3 @@ custom:
   environment:
     dev: ${file(./config/development.yml)}
     prod: ${file(./config/production.yml)}
-  customDomain:
-    domainName: ${self:custom.environment.${self:provider.stage}.domain}
-    basePath: ''
-    stage: ${self:provider.stage}
-    createRoute53Record: true
-    endpointType: regional
-    apiType: http

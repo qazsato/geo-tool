@@ -64,7 +64,6 @@
     "sass": "1.32.13",
     "sass-loader": "10.1.1",
     "serverless": "3.23.0",
-    "serverless-domain-manager": "6.2.0",
     "serverless-offline": "11.2.3",
     "stylelint": "13.13.1",
     "stylelint-config-prettier": "8.0.2",
