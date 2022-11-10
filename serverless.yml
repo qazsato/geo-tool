@@ -1,5 +1,7 @@
 service: geo-tool
 
+frameworkVersion: '3'
+
 provider:
   name: aws
   runtime: nodejs16.x
@@ -9,7 +11,6 @@ provider:
   logRetentionInDays: 30
   timeout: 20
   versionFunctions: false
-  lambdaHashingVersion: 20201221
   architecture: arm64
   environment:
     NODE_ENV: ${self:provider.stage}
