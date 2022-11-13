@@ -21,6 +21,7 @@ provider:
 functions:
   nuxt:
     handler: server/index.nuxt
+    url: true
     events:
       - httpApi: '*'
 
