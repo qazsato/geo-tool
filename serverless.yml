@@ -14,15 +14,11 @@ provider:
   architecture: arm64
   environment:
     NODE_ENV: ${self:provider.stage}
-  apiGateway:
-    binaryMediaTypes:
-      - '*/*'
 
 functions:
   nuxt:
     handler: server/index.nuxt
-    events:
-      - httpApi: '*'
+    url: true
 
 plugins:
   - serverless-offline
