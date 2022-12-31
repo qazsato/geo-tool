@@ -39,7 +39,7 @@
     "japanmesh": "1.0.0",
     "local-storage": "2.0.0",
     "lodash": "4.17.21",
-    "nuxt": "2.15.6",
+    "nuxt": "3.0.0",
     "nuxt-start": "2.15.6",
     "serverless-http": "3.1.0",
     "vue-virtual-scroller": "1.0.10"
@@ -67,6 +67,6 @@
     "stylelint": "13.13.1",
     "stylelint-config-prettier": "8.0.2",
     "stylelint-config-standard": "22.0.0",
-    "vue-jest": "3.0.7"
+    "vue-jest": "4.0.1"
   }
 }
