@@ -2,9 +2,9 @@
 
 ## 本リポジトリについて
 
-地図上の緯度経度可視化ツール。
+[Geo API](https://github.com/qazsato/geo-api) を利用した、地図可視化ツール。
 
-下記 4 種類の表示が可能。
+下記 4 種類の表示が可能です。
 
 1. 住所 (都道府県・市区町村など)
 2. 地域メッシュ
@@ -16,6 +16,13 @@
 ## ローカル環境
 
 ### セットアップ
+
+.env を作成し、各 API キー情報を設定。
+
+```
+GOOGLE_MAPS_API_KEY={YOUR_API_KEY}
+GEO_API_KEY={YOUR_API_KEY}
+```
 
 ```bash
 $ docker-compose build
