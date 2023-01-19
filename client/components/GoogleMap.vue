@@ -299,13 +299,16 @@ export default {
       if (!this.$refs.map) {
         return
       }
+      const zoom = this.map ? this.map.getZoom() : this.defaultZoom
+      const center = this.map
+        ? this.map.getCenter()
+        : new this.google.maps.LatLng(this.defaultCenter.lat, this.defaultCenter.lng)
       if (!mapId) {
         mapId = config.map_theme[this.getDefaultTheme()]
       }
-      const position = new this.google.maps.LatLng(this.defaultCenter.lat, this.defaultCenter.lng)
       this.map = new this.google.maps.Map(this.$refs.map, {
-        zoom: this.defaultZoom,
-        center: position,
+        zoom,
+        center,
         mapTypeId: this.isSatellite ? this.google.maps.MapTypeId.SATELLITE : this.google.maps.MapTypeId.ROADMAP,
         clickableIcons: false,
         disableDefaultUI: true,
