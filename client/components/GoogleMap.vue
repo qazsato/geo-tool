@@ -152,6 +152,10 @@ export default {
     isVisiblePolygonController() {
       return this.geojsons.length > 0
     },
+
+    isSatellite() {
+      return this.theme === 'satellite'
+    },
   },
 
   watch: {
@@ -165,7 +169,12 @@ export default {
     },
 
     theme(val) {
-      this.map.setMapTypeId(val)
+      if (this.isSatellite) {
+        this.map.setMapTypeId(val)
+      } else {
+        const mapId = config.map_theme[val]
+        this.initMap(mapId)
+      }
       ls(LS_THEME_KEY, val)
       this.$emit('stateChanged', this.getMapState())
     },
@@ -286,24 +295,23 @@ export default {
       return theme || mapTheme.silver.key
     },
 
-    initMap() {
-      if (!this.$refs.map) return
+    initMap(mapId) {
+      if (!this.$refs.map) {
+        return
+      }
+      if (!mapId) {
+        mapId = config.map_theme[this.getDefaultTheme()]
+      }
       const position = new this.google.maps.LatLng(this.defaultCenter.lat, this.defaultCenter.lng)
       this.map = new this.google.maps.Map(this.$refs.map, {
         zoom: this.defaultZoom,
         center: position,
-        mapTypeId: this.theme,
+        mapTypeId: this.isSatellite ? this.google.maps.MapTypeId.SATELLITE : this.google.maps.MapTypeId.ROADMAP,
         clickableIcons: false,
         disableDefaultUI: true,
         zoomControl: true,
         scaleControl: true,
-        mapTypeControlOptions: {
-          mapTypeIds: this.themes,
-        },
-      })
-      this.themes.forEach((t) => {
-        const s = new this.google.maps.StyledMapType(config.map_theme[t])
-        this.map.mapTypes.set(t, s)
+        mapId,
       })
     },
 
