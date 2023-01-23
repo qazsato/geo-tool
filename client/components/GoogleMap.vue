@@ -1,7 +1,7 @@
 <template>
   <div class="map-container" :style="{ width: width, height: height }">
     <div ref="map" class="map"></div>
-    <div class="controller">
+    <div class="left-controller">
       <div v-if="isVisiblePolygonController" class="polygon-controller">
         <el-color-picker v-model="color" size="medium" :predefine="predefineColors"></el-color-picker>
         <el-switch v-if="visibleSwitch" v-model="isVisiblePolygon" :active-color="color"></el-switch>
@@ -12,6 +12,9 @@
           <span class="name">{{ t }}</span>
         </el-option>
       </el-select>
+    </div>
+    <div class="right-controller">
+      <el-button icon="el-icon-position" circle @click="togglePosition"></el-button>
     </div>
   </div>
 </template>
@@ -373,6 +376,29 @@ export default {
         color: this.color,
       }
     },
+
+    togglePosition() {
+      this.map.setTilt(45)
+      let prevLocation
+      let currentLocation
+      navigator.geolocation.watchPosition((event) => {
+        prevLocation = currentLocation
+        const lat = event.coords.latitude
+        const lng = event.coords.longitude
+        currentLocation = new this.google.maps.LatLng(lat, lng)
+        if (prevLocation) {
+          const heading = this.google.maps.geometry.spherical.computeHeading(prevLocation, currentLocation)
+          this.map.setHeading(heading)
+        }
+
+        // eslint-disable-next-line no-new
+        new this.google.maps.Marker({
+          position: currentLocation,
+          map: this.map,
+        })
+        this.map.panTo(currentLocation)
+      })
+    },
   },
 }
 </script>
@@ -387,7 +413,7 @@ export default {
   height: 100%;
 }
 
-.controller {
+.left-controller {
   position: absolute;
   left: 5px;
   bottom: 30px;
@@ -430,5 +456,11 @@ export default {
   &:hover {
     opacity: 0.9;
   }
+}
+
+.right-controller {
+  position: absolute;
+  right: 10px;
+  bottom: 120px;
 }
 </style>

@@ -14,7 +14,7 @@ export const actions = {
   async load(context) {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY
     const google = await GoogleMapsApiLoader({
-      libraries: ['visualization'],
+      libraries: ['visualization', 'geometry'],
       apiKey,
     })
     context.commit('load', google)
