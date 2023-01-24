@@ -21,6 +21,9 @@
     </div>
     <div class="right-bottom-controller">
       <div>
+        <el-button icon="el-icon-sunny" :type="lightType" circle @click="toggleLight"></el-button>
+      </div>
+      <div>
         <el-button icon="el-icon-discover" :type="compassType" circle @click="toggleCompass"></el-button>
       </div>
       <div>
@@ -34,6 +37,7 @@
 import MarkerClusterer from '@google/markerclustererplus'
 import _ from 'lodash'
 import ls from 'local-storage'
+import NoSleep from 'nosleep.js'
 import config from '@/config'
 import { adjustViewPort } from '@/utils/map'
 import { toLocations } from '@/utils/geojson'
@@ -163,9 +167,11 @@ export default {
       watchId: null,
       currentLocation: null,
       tableData: null,
-      isTracking: false,
+      isLight: false,
       isCompass: false,
+      isTracking: false,
       isDragging: false,
+      noSleep: null,
     }
   },
 
@@ -176,6 +182,10 @@ export default {
 
     isSatellite() {
       return this.theme === 'satellite'
+    },
+
+    lightType() {
+      return this.isLight ? 'primary' : 'default'
     },
 
     compassType() {
@@ -293,6 +303,17 @@ export default {
     focusLocations(val) {
       if (val.length > 0) {
         adjustViewPort(this.google, this.map, val)
+      }
+    },
+
+    isLight(val) {
+      if (val) {
+        if (this.noSleep === null) {
+          this.noSleep = new NoSleep()
+        }
+        this.noSleep.enable()
+      } else {
+        this.noSleep.disable()
       }
     },
 
@@ -453,6 +474,10 @@ export default {
       }
     },
 
+    toggleLight() {
+      this.isLight = !this.isLight
+    },
+
     toggleCompass() {
       this.isCompass = !this.isCompass
     },
@@ -574,7 +599,7 @@ export default {
   right: 10px;
   bottom: 120px;
 
-  > div:first-child {
+  > div:not(:last-child) {
     margin-bottom: 10px;
   }
 }
