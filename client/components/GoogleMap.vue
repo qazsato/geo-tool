@@ -21,13 +21,19 @@
     </div>
     <div class="right-bottom-controller">
       <div>
-        <el-button icon="el-icon-sunny" :type="lightType" circle @click="toggleLight"></el-button>
+        <el-tooltip :disabled="isLight" content="自動スリープを防止します" placement="left">
+          <el-button icon="el-icon-sunny" :type="lightType" circle @click="toggleLight"></el-button>
+        </el-tooltip>
       </div>
       <div>
-        <el-button icon="el-icon-discover" :type="compassType" circle @click="toggleCompass"></el-button>
+        <el-tooltip :disabled="isCompass" content="向いている方向を上にします" placement="left">
+          <el-button icon="el-icon-discover" :type="compassType" circle @click="toggleCompass"></el-button>
+        </el-tooltip>
       </div>
       <div>
-        <el-button icon="el-icon-position" :type="positionType" circle @click="togglePosition"></el-button>
+        <el-tooltip :disabled="isTracking" content="現在位置を取得します" placement="left">
+          <el-button icon="el-icon-position" :type="trackingType" circle @click="toggleTracking"></el-button>
+        </el-tooltip>
       </div>
     </div>
   </div>
@@ -192,7 +198,7 @@ export default {
       return this.isCompass ? 'primary' : 'default'
     },
 
-    positionType() {
+    trackingType() {
       return this.isTracking ? 'primary' : 'default'
     },
   },
@@ -353,9 +359,11 @@ export default {
         })
       } else {
         navigator.geolocation.clearWatch(this.watchId)
-        this.currentLocation.setMap(null)
-        this.currentLocation = null
         this.watchId = null
+        if (this.currentLocation) {
+          this.currentLocation.setMap(null)
+          this.currentLocation = null
+        }
       }
     },
   },
@@ -482,7 +490,7 @@ export default {
       this.isCompass = !this.isCompass
     },
 
-    togglePosition() {
+    toggleTracking() {
       this.isTracking = !this.isTracking
     },
 
@@ -495,12 +503,7 @@ export default {
         { key: 'webkitCompassHeading', value: event.webkitCompassHeading },
       ]
       const heading = event.webkitCompassHeading
-      const currentHeading = this.map.getHeading()
-      if (currentHeading > heading) {
-        if (currentHeading - heading >= 3) {
-          this.map.setHeading(heading)
-        }
-      } else if (heading - currentHeading >= 3) {
+      if (Math.abs(heading - this.map.getHeading()) >= 3) {
         this.map.setHeading(heading)
       }
     },
