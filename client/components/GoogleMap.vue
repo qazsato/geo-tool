@@ -13,8 +13,19 @@
         </el-option>
       </el-select>
     </div>
-    <div class="right-controller">
-      <el-button icon="el-icon-position" circle @click="togglePosition"></el-button>
+    <div v-if="isCompass" class="right-top-controller">
+      <el-table :data="tableData">
+        <el-table-column prop="key" label="Key" width="180"></el-table-column>
+        <el-table-column prop="value" label="Value" width="220"></el-table-column>
+      </el-table>
+    </div>
+    <div class="right-bottom-controller">
+      <div>
+        <el-button icon="el-icon-discover" :type="compassType" circle @click="toggleCompass"></el-button>
+      </div>
+      <div>
+        <el-button icon="el-icon-position" :type="positionType" circle @click="togglePosition"></el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +38,7 @@ import config from '@/config'
 import { adjustViewPort } from '@/utils/map'
 import { toLocations } from '@/utils/geojson'
 import { mapTheme } from '@/constants/view-map-state'
+import ImageLocation from '@/assets/images/map/location.svg'
 const LS_COLOR_KEY = 'google-map-data-color'
 const LS_THEME_KEY = 'google-map-skin-theme'
 
@@ -148,6 +160,12 @@ export default {
       localInfowindows: [],
       localHeatmap: null,
       visibleSwitch: true,
+      watchId: null,
+      currentLocation: null,
+      tableData: null,
+      isTracking: false,
+      isCompass: false,
+      isDragging: false,
     }
   },
 
@@ -158,6 +176,14 @@ export default {
 
     isSatellite() {
       return this.theme === 'satellite'
+    },
+
+    compassType() {
+      return this.isCompass ? 'primary' : 'default'
+    },
+
+    positionType() {
+      return this.isTracking ? 'primary' : 'default'
     },
   },
 
@@ -269,6 +295,48 @@ export default {
         adjustViewPort(this.google, this.map, val)
       }
     },
+
+    isCompass(val) {
+      if (val) {
+        this.map.setTilt(45)
+        if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
+          window.DeviceOrientationEvent.requestPermission().then((response) => {
+            if (response === 'granted') {
+              window.addEventListener('deviceorientation', this.onDeviceOrientation, true)
+            }
+          })
+        }
+      } else {
+        this.map.setTilt(0)
+        window.removeEventListener('deviceorientation', this.onDeviceOrientation, true)
+      }
+    },
+
+    isTracking(val) {
+      if (val) {
+        this.map.setZoom(20)
+        this.watchId = navigator.geolocation.watchPosition((event) => {
+          const lat = event.coords.latitude
+          const lng = event.coords.longitude
+          const position = new this.google.maps.LatLng(lat, lng)
+          if (this.currentLocation) {
+            this.currentLocation.setPosition(position)
+          } else {
+            this.currentLocation = new this.google.maps.Marker({
+              position,
+              map: this.map,
+              icon: ImageLocation,
+            })
+          }
+          this.map.panTo(position)
+        })
+      } else {
+        navigator.geolocation.clearWatch(this.watchId)
+        this.currentLocation.setMap(null)
+        this.currentLocation = null
+        this.watchId = null
+      }
+    },
   },
 
   mounted() {
@@ -295,7 +363,7 @@ export default {
         return this.defaultTheme
       }
       const theme = ls(LS_THEME_KEY)
-      return theme || mapTheme.silver.key
+      return theme || mapTheme.logistics.key
     },
 
     initMap(mapId) {
@@ -329,6 +397,14 @@ export default {
       this.map.data.addListener('mouseout', (e) => this.$emit('mouseoutData', e))
       this.map.data.addListener('mousemove', (e) => this.$emit('mousemoveData', e))
       this.map.data.addListener('mouseover', (e) => this.$emit('mouseoverData', e))
+      this.map.addListener('dragstart', () => (this.isDragging = true))
+      this.map.addListener('dragend', () => (this.isDragging = false))
+      this.map.addListener('center_changed', () => {
+        if (this.isDragging) {
+          this.isTracking = false
+          this.isCompass = false
+        }
+      })
     },
 
     drawData() {
@@ -377,27 +453,62 @@ export default {
       }
     },
 
+    toggleCompass() {
+      this.isCompass = !this.isCompass
+    },
+
     togglePosition() {
-      this.map.setTilt(45)
-      let prevLocation
-      let currentLocation
-      navigator.geolocation.watchPosition((event) => {
-        prevLocation = currentLocation
-        const lat = event.coords.latitude
-        const lng = event.coords.longitude
-        currentLocation = new this.google.maps.LatLng(lat, lng)
-        if (prevLocation) {
-          const heading = this.google.maps.geometry.spherical.computeHeading(prevLocation, currentLocation)
+      this.isTracking = !this.isTracking
+    },
+
+    onDeviceOrientation(event) {
+      this.tableData = [
+        { key: 'alpha', value: event.alpha },
+        { key: 'beta', value: event.beta },
+        { key: 'gamma', value: event.gamma },
+        { key: 'heading (計算)', value: this.compassHeading(event.alpha, event.beta, event.gamma) },
+        { key: 'webkitCompassHeading', value: event.webkitCompassHeading },
+      ]
+      const heading = event.webkitCompassHeading
+      const currentHeading = this.map.getHeading()
+      if (currentHeading > heading) {
+        if (currentHeading - heading >= 3) {
           this.map.setHeading(heading)
         }
+      } else if (heading - currentHeading >= 3) {
+        this.map.setHeading(heading)
+      }
+    },
 
-        // eslint-disable-next-line no-new
-        new this.google.maps.Marker({
-          position: currentLocation,
-          map: this.map,
-        })
-        this.map.panTo(currentLocation)
-      })
+    compassHeading(alpha, beta, gamma) {
+      const degtorad = Math.PI / 180 /*  度° ↔ ラジアン 間の換算用  */
+
+      const _x = beta ? beta * degtorad : 0 // β 値
+      const _y = gamma ? gamma * degtorad : 0 // γ 値
+      const _z = alpha ? alpha * degtorad : 0 // α 値
+
+      // const cX = Math.cos(_x)
+      const cY = Math.cos(_y)
+      const cZ = Math.cos(_z)
+      const sX = Math.sin(_x)
+      const sY = Math.sin(_y)
+      const sZ = Math.sin(_z)
+
+      /*  V の x , y 成分を計算する  */
+      const Vx = -cZ * sY - sZ * sX * cY
+      const Vy = -sZ * sY + cZ * sX * cY
+
+      /*  コンパスの向きを計算する  */
+      let compassHeading = Math.atan(Vx / Vy)
+
+      /*  コンパスの向きを， 0 以上 2 π 未満に換算する  */
+      if (Vy < 0) {
+        compassHeading += Math.PI
+      } else if (Vx < 0) {
+        compassHeading += 2 * Math.PI
+      }
+
+      return compassHeading * (180 / Math.PI) /*  度°によるコンパスの向き  */
     },
   },
 }
@@ -458,9 +569,27 @@ export default {
   }
 }
 
-.right-controller {
+.right-bottom-controller {
   position: absolute;
   right: 10px;
   bottom: 120px;
+
+  > div:first-child {
+    margin-bottom: 10px;
+  }
+}
+</style>
+
+<style lang="scss">
+.right-top-controller {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0.7;
+
+  th,
+  td {
+    padding: 6px 0;
+  }
 }
 </style>
