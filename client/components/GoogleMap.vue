@@ -326,12 +326,17 @@ export default {
     isCompass(val) {
       if (val) {
         this.map.setTilt(45)
-        if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
-          window.DeviceOrientationEvent.requestPermission().then((response) => {
-            if (response === 'granted') {
-              window.addEventListener('deviceorientation', this.onDeviceOrientation, true)
-            }
-          })
+        if (window.DeviceOrientationEvent) {
+          // iOS(13以降)は許可が必要
+          if (window.DeviceOrientationEvent.requestPermission) {
+            window.DeviceOrientationEvent.requestPermission().then((response) => {
+              if (response === 'granted') {
+                window.addEventListener('deviceorientation', this.onDeviceOrientation, true)
+              }
+            })
+          } else {
+            window.addEventListener('deviceorientation', this.onDeviceOrientation, true)
+          }
         }
       } else {
         this.map.setTilt(0)
