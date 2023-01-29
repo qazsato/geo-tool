@@ -504,44 +504,12 @@ export default {
         { key: 'alpha', value: event.alpha },
         { key: 'beta', value: event.beta },
         { key: 'gamma', value: event.gamma },
-        { key: 'heading (計算)', value: this.compassHeading(event.alpha, event.beta, event.gamma) },
         { key: 'webkitCompassHeading', value: event.webkitCompassHeading },
       ]
       const heading = event.webkitCompassHeading
       if (Math.abs(heading - this.map.getHeading()) >= 3) {
         this.map.setHeading(heading)
       }
-    },
-
-    compassHeading(alpha, beta, gamma) {
-      const degtorad = Math.PI / 180 /*  度° ↔ ラジアン 間の換算用  */
-
-      const _x = beta ? beta * degtorad : 0 // β 値
-      const _y = gamma ? gamma * degtorad : 0 // γ 値
-      const _z = alpha ? alpha * degtorad : 0 // α 値
-
-      // const cX = Math.cos(_x)
-      const cY = Math.cos(_y)
-      const cZ = Math.cos(_z)
-      const sX = Math.sin(_x)
-      const sY = Math.sin(_y)
-      const sZ = Math.sin(_z)
-
-      /*  V の x , y 成分を計算する  */
-      const Vx = -cZ * sY - sZ * sX * cY
-      const Vy = -sZ * sY + cZ * sX * cY
-
-      /*  コンパスの向きを計算する  */
-      let compassHeading = Math.atan(Vx / Vy)
-
-      /*  コンパスの向きを， 0 以上 2 π 未満に換算する  */
-      if (Vy < 0) {
-        compassHeading += Math.PI
-      } else if (Vx < 0) {
-        compassHeading += 2 * Math.PI
-      }
-
-      return compassHeading * (180 / Math.PI) /*  度°によるコンパスの向き  */
     },
   },
 }
