@@ -1,7 +1,7 @@
 <template>
   <div class="map-container" :style="{ width: width, height: height }">
     <div ref="map" class="map"></div>
-    <div class="controller">
+    <div class="left-controller">
       <div v-if="isVisiblePolygonController" class="polygon-controller">
         <el-color-picker v-model="color" size="medium" :predefine="predefineColors"></el-color-picker>
         <el-switch v-if="visibleSwitch" v-model="isVisiblePolygon" :active-color="color"></el-switch>
@@ -13,6 +13,23 @@
         </el-option>
       </el-select>
     </div>
+    <div class="right-bottom-controller">
+      <div>
+        <el-tooltip :disabled="isLight" content="自動スリープを防止します" placement="left">
+          <el-button icon="el-icon-sunny" :type="lightType" circle @click="toggleLight"></el-button>
+        </el-tooltip>
+      </div>
+      <div>
+        <el-tooltip :disabled="isCompass" content="向いている方向を上にします" placement="left">
+          <el-button icon="el-icon-discover" :type="compassType" circle @click="toggleCompass"></el-button>
+        </el-tooltip>
+      </div>
+      <div>
+        <el-tooltip :disabled="isTracking" content="現在位置を取得します" placement="left">
+          <el-button icon="el-icon-position" :type="trackingType" circle @click="toggleTracking"></el-button>
+        </el-tooltip>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -20,10 +37,12 @@
 import MarkerClusterer from '@google/markerclustererplus'
 import _ from 'lodash'
 import ls from 'local-storage'
+import NoSleep from 'nosleep.js'
 import config from '@/config'
 import { adjustViewPort } from '@/utils/map'
 import { toLocations } from '@/utils/geojson'
 import { mapTheme } from '@/constants/view-map-state'
+import ImageLocation from '@/assets/images/map/location.svg'
 const LS_COLOR_KEY = 'google-map-data-color'
 const LS_THEME_KEY = 'google-map-skin-theme'
 
@@ -145,6 +164,13 @@ export default {
       localInfowindows: [],
       localHeatmap: null,
       visibleSwitch: true,
+      watchId: null,
+      currentLocation: null,
+      isLight: false,
+      isCompass: false,
+      isTracking: false,
+      isDragging: false,
+      noSleep: null,
     }
   },
 
@@ -155,6 +181,18 @@ export default {
 
     isSatellite() {
       return this.theme === 'satellite'
+    },
+
+    lightType() {
+      return this.isLight ? 'primary' : 'default'
+    },
+
+    compassType() {
+      return this.isCompass ? 'primary' : 'default'
+    },
+
+    trackingType() {
+      return this.isTracking ? 'primary' : 'default'
     },
   },
 
@@ -266,6 +304,66 @@ export default {
         adjustViewPort(this.google, this.map, val)
       }
     },
+
+    isLight(val) {
+      if (val) {
+        if (this.noSleep === null) {
+          this.noSleep = new NoSleep()
+        }
+        this.noSleep.enable()
+      } else {
+        this.noSleep.disable()
+      }
+    },
+
+    isCompass(val) {
+      if (val) {
+        this.map.setTilt(45)
+        if (window.DeviceOrientationEvent) {
+          // iOS(13以降)は許可が必要
+          if (window.DeviceOrientationEvent.requestPermission) {
+            window.DeviceOrientationEvent.requestPermission().then((response) => {
+              if (response === 'granted') {
+                window.addEventListener('deviceorientation', this.onDeviceOrientation, true)
+              }
+            })
+          } else {
+            window.addEventListener('deviceorientation', this.onDeviceOrientation, true)
+          }
+        }
+      } else {
+        this.map.setTilt(0)
+        window.removeEventListener('deviceorientation', this.onDeviceOrientation, true)
+      }
+    },
+
+    isTracking(val) {
+      if (val) {
+        this.map.setZoom(20)
+        this.watchId = navigator.geolocation.watchPosition((event) => {
+          const lat = event.coords.latitude
+          const lng = event.coords.longitude
+          const position = new this.google.maps.LatLng(lat, lng)
+          if (this.currentLocation) {
+            this.currentLocation.setPosition(position)
+          } else {
+            this.currentLocation = new this.google.maps.Marker({
+              position,
+              map: this.map,
+              icon: ImageLocation,
+            })
+          }
+          this.map.panTo(position)
+        })
+      } else {
+        navigator.geolocation.clearWatch(this.watchId)
+        this.watchId = null
+        if (this.currentLocation) {
+          this.currentLocation.setMap(null)
+          this.currentLocation = null
+        }
+      }
+    },
   },
 
   mounted() {
@@ -292,7 +390,7 @@ export default {
         return this.defaultTheme
       }
       const theme = ls(LS_THEME_KEY)
-      return theme || mapTheme.silver.key
+      return theme || mapTheme.logistics.key
     },
 
     initMap(mapId) {
@@ -326,6 +424,14 @@ export default {
       this.map.data.addListener('mouseout', (e) => this.$emit('mouseoutData', e))
       this.map.data.addListener('mousemove', (e) => this.$emit('mousemoveData', e))
       this.map.data.addListener('mouseover', (e) => this.$emit('mouseoverData', e))
+      this.map.addListener('dragstart', () => (this.isDragging = true))
+      this.map.addListener('dragend', () => (this.isDragging = false))
+      this.map.addListener('center_changed', () => {
+        if (this.isDragging) {
+          this.isTracking = false
+          this.isCompass = false
+        }
+      })
     },
 
     drawData() {
@@ -373,6 +479,25 @@ export default {
         color: this.color,
       }
     },
+
+    toggleLight() {
+      this.isLight = !this.isLight
+    },
+
+    toggleCompass() {
+      this.isCompass = !this.isCompass
+    },
+
+    toggleTracking() {
+      this.isTracking = !this.isTracking
+    },
+
+    onDeviceOrientation(event) {
+      const heading = event.webkitCompassHeading
+      if (Math.abs(heading - this.map.getHeading()) >= 3) {
+        this.map.setHeading(heading)
+      }
+    },
   },
 }
 </script>
@@ -387,7 +512,7 @@ export default {
   height: 100%;
 }
 
-.controller {
+.left-controller {
   position: absolute;
   left: 5px;
   bottom: 30px;
@@ -429,6 +554,16 @@ export default {
 
   &:hover {
     opacity: 0.9;
+  }
+}
+
+.right-bottom-controller {
+  position: absolute;
+  right: 10px;
+  bottom: 120px;
+
+  > div:not(:last-child) {
+    margin-bottom: 10px;
   }
 }
 </style>
