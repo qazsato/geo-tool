@@ -13,12 +13,6 @@
         </el-option>
       </el-select>
     </div>
-    <div v-if="isCompass" class="right-top-controller">
-      <el-table :data="tableData">
-        <el-table-column prop="key" label="Key" width="180"></el-table-column>
-        <el-table-column prop="value" label="Value" width="220"></el-table-column>
-      </el-table>
-    </div>
     <div class="right-bottom-controller">
       <div>
         <el-tooltip :disabled="isLight" content="自動スリープを防止します" placement="left">
@@ -172,7 +166,6 @@ export default {
       visibleSwitch: true,
       watchId: null,
       currentLocation: null,
-      tableData: null,
       isLight: false,
       isCompass: false,
       isTracking: false,
@@ -500,12 +493,6 @@ export default {
     },
 
     onDeviceOrientation(event) {
-      this.tableData = [
-        { key: 'alpha', value: event.alpha },
-        { key: 'beta', value: event.beta },
-        { key: 'gamma', value: event.gamma },
-        { key: 'webkitCompassHeading', value: event.webkitCompassHeading },
-      ]
       const heading = event.webkitCompassHeading
       if (Math.abs(heading - this.map.getHeading()) >= 3) {
         this.map.setHeading(heading)
@@ -577,20 +564,6 @@ export default {
 
   > div:not(:last-child) {
     margin-bottom: 10px;
-  }
-}
-</style>
-
-<style lang="scss">
-.right-top-controller {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  opacity: 0.7;
-
-  th,
-  td {
-    padding: 6px 0;
   }
 }
 </style>
