@@ -13,6 +13,7 @@ provider:
   versionFunctions: false
   architecture: arm64
   environment:
+    TZ: Asia/Tokyo
     NODE_ENV: ${self:provider.stage}
 
 functions:
