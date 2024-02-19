@@ -34,4 +34,4 @@ http://localhost:3000 でアクセスして画面が表示されれば OK。
 
 ## サンプル
 
-- [東京 23 区の交差点の交通事故分布](https://tool.geo.qazsato.com/viewmap/04686590251afc9a64c7403c94e893b8)
+- [東京 23 区の交差点の交通事故分布](https://tool.geodig.jp/viewmap/04686590251afc9a64c7403c94e893b8)
