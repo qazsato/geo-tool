@@ -2,6 +2,9 @@ service: geo-tool
 
 frameworkVersion: '3'
 
+package:
+  individually: true
+
 provider:
   name: aws
   runtime: nodejs20.x
