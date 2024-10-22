@@ -26,10 +26,6 @@ provider:
   versionFunctions: false
   architecture: arm64
 
-package:
-  patterns:
-    - '!node_modules/**' # HACK: sls v4 から devDependencies がなぜか含まれてしまうので明示的に除外する
-
 functions:
   nuxt:
     handler: server/index.nuxt
